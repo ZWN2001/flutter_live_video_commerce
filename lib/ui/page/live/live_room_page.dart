@@ -2,28 +2,48 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barrage/flutter_barrage.dart';
+import 'package:get/get.dart';
+import 'package:live_video_commerce/entity/live_room.dart';
+import 'package:video_player/video_player.dart';
+
+import '../../../utils/stroke_text_widget.dart';
 
 class LiveRoomPage extends StatefulWidget {
-  const LiveRoomPage({Key? key}) : super(key: key);
+  final int roomid;
+  const LiveRoomPage({Key? key, required this.roomid}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _LiveRoomPageState();
 }
 
-class _LiveRoomPageState extends State<LiveRoomPage> {
+class _LiveRoomPageState extends State<LiveRoomPage> with  TickerProviderStateMixin {
 
   final barrageWallController = BarrageWallController();
   Random random = Random();
   final textEditingController = TextEditingController();
   late List<Bullet> bullets;
+  late VideoPlayerController _videoPlayerController;
+  TextStyle ts = const TextStyle(
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    decoration: TextDecoration.none,
+  );
 
   @override
   void initState() {
     super.initState();
     bullets = List<Bullet>.generate(1000, (i) {
       final showTime = random.nextInt(60000); // in 60s
-      return Bullet(child: Text('$i-$showTime'), showTime: showTime);
+      return Bullet(child: StrokeTextWidget('$i-$showTime',textStyle: ts,), showTime: showTime);
     });
+
+    _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(
+        'http://202.194.15.142:7001/live/movie.flv'))
+      ..initialize().then((_) {
+        _videoPlayerController.play();
+        setState(() {});
+      });
   }
 
   @override
@@ -43,40 +63,26 @@ class _LiveRoomPageState extends State<LiveRoomPage> {
           child: Column(children: <Widget>[
             Expanded(
               flex: 9,
-              child: Container(
-                color: Colors.pink,
-                child: Stack(children: <Widget>[
-                  Positioned(
-                      top: 10,
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width,
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .width *
-                          MediaQuery
-                              .of(context)
-                              .size
-                              .aspectRatio +
-                          100,
-                      //视频播放
+              child: Stack(children: <Widget>[
+                // Positioned(
+                //     top: 10,
+                //     width: Get.width,
+                //     height: Get.width * Get.size.aspectRatio + 100,
+                //     //视频播放
+                //     child: VideoPlayer(_videoPlayerController)),
+                Positioned(
+                    top: 14,
+                      width: Get.width,
+                      height: Get.width * Get.size.aspectRatio + 92,
+                  child: BarrageWall(
+                      debug: true,
+                      safeBottomHeight:
+                      60,
+                      bullets: bullets,
+                      controller: barrageWallController,
                       child: Container()),
-                  Positioned(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width *
-                          MediaQuery.of(context).size.aspectRatio +
-                          100,
-                      child: BarrageWall(
-                          debug: true,
-                          safeBottomHeight:
-                          60,
-                          bullets: bullets,
-                          controller: barrageWallController,
-                          child: Container())),
-                ]),
-              ),
+                ),
+              ]),
             ),
             ElevatedButton(
                 onPressed: () => barrageWallController.clear(),

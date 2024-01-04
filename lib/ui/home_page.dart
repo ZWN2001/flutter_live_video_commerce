@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_barrage/flutter_barrage.dart';
+import 'package:live_video_commerce/ui/page/live/live_section_page.dart';
+import 'package:live_video_commerce/ui/page/user/user_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,7 +12,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _pageIndex = 0;
   final List<Widget> _pages = const [
-
+    LiveSectionPage(),
+    UserPage()
   ];
 
   @override
