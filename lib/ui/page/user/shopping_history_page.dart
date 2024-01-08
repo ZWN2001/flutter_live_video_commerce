@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:live_video_commerce/entity/order.dart';
+
+import '../../widget/my_order_card.dart';
+
 
 class ShoppingHistoryPage extends StatelessWidget {
-  const ShoppingHistoryPage({super.key});
+  final List<Order> orderList;
+  const ShoppingHistoryPage({super.key, required this.orderList});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Shopping History'),
-      ),
-      body: Center(
-        child: Text('Shopping History'),
-      ),
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      itemCount: orderList.length,
+      itemBuilder: (BuildContext context, int index) {
+        return MyOrderCard(order: orderList[index],);
+      },
     );
   }
 }

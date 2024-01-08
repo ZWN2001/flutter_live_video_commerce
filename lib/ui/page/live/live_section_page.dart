@@ -105,7 +105,7 @@ class LiveSectionPageState extends State<LiveSectionPage> with SingleTickerProvi
     });
     // _sections = await SectionAPI.sectionList();
     Section s = Section(id: 1,description: "推荐", title: "推荐",);
-    _sections = [s];
+    _sections = [s,s];
     _tabController = TabController(length: _sections.length, vsync: this);
     _loading = false;
     if (mounted) {
