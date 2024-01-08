@@ -24,12 +24,12 @@ class LiveRoomCard extends StatelessWidget {
                 child: SizedBox(width: width ,child: Image.network(liveRoom.coverUrl, fit: BoxFit.fitWidth,),),),
               Positioned(
                 bottom: 4, left: 4,
-                child: Text(liveRoom.anchorName),),
+                child: Text(liveRoom.anchorName,overflow: TextOverflow.ellipsis,),),
               Positioned(
                   bottom: 4, right: 4,
                   child: Row(
                     children: [
-                      const Icon(Icons.person, size: 16, color: Colors.white,),
+                      const Icon(Icons.person, size: 16, color: Colors.black54,),
                       Text(liveRoom.onlineCount.toString()),
                     ],
                   )),

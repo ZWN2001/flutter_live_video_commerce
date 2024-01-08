@@ -18,6 +18,14 @@ class Section {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'sectionId': id,
+      'title': title,
+      'description': description,
+    };
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

@@ -72,4 +72,16 @@ class LiveRoomMini{
       roomSectionName: jsonMap['roomSectionName'] as String,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'roomId': roomId,
+      'title': title,
+      'coverUrl': coverUrl,
+      'status': status,
+      'onlineCount': onlineCount,
+      'anchorName': anchorName,
+      'roomSectionName': roomSectionName,
+    };
+  }
 }
