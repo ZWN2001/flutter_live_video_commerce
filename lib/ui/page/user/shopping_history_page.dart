@@ -10,12 +10,15 @@ class ShoppingHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.zero,
-      itemCount: orderList.length,
-      itemBuilder: (BuildContext context, int index) {
-        return MyOrderCard(order: orderList[index],);
-      },
+    return Container(
+      color: Colors.grey[200],
+      child: ListView.builder(
+        padding: EdgeInsets.zero,
+        itemCount: orderList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return MyOrderCard(order: orderList[index],);
+        },
+      ),
     );
   }
 }

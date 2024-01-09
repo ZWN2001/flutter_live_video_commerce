@@ -51,10 +51,10 @@ class MyOrderCard extends StatelessWidget {
     return Row(
       children: [
         ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(24.0),
           child: SizedBox(
-            width: 96,
-            height: 96,
+            width: 90,
+            height: 90,
             child: Image.network(order.commodity.image),
           ),
         ),
