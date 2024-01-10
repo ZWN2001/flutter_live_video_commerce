@@ -41,7 +41,7 @@ dependencies:
   get: ^4.6.6
   pull_to_refresh_flutter3: ^2.0.2
   flutter_swiper_view: ^1.1.8
-  fanjiao_danmu: ^0.5.3
+  flutter_svg: ^2.0.9
 
 dev_dependencies:
   flutter_test:
@@ -66,9 +66,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/icon/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

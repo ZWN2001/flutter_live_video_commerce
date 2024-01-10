@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barrage/flutter_barrage.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
 // import 'package:live_video_commerce/entity/live_room.dart';
 import 'package:live_video_commerce/ui/widget/live_room_chat_area.dart';
 import 'package:video_player/video_player.dart';
@@ -20,14 +22,16 @@ class LiveRoomPage extends StatefulWidget {
 
 class _LiveRoomPageState extends State<LiveRoomPage>
     with TickerProviderStateMixin {
-  final barrageWallController = BarrageWallController();
+  final _barrageWallController = BarrageWallController();
   Random random = Random();
-  final textEditingController = TextEditingController();
+  final _textEditingController = TextEditingController();
   late List<Bullet> bullets;
   late VideoPlayerController _videoPlayerController;
   final TextEditingController _barrageEditingController =
       TextEditingController();
   bool _isVideoControlAreaShowing = false;
+  bool _isBarrageShowing = false;
+  bool _isFullScreen = false;
   TextStyle barrageTextStyle = const TextStyle(
     color: Colors.white,
     fontSize: 16,
@@ -110,7 +114,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
             debug: false,
             safeBottomHeight: 60,
             bullets: bullets,
-            controller: barrageWallController,
+            controller: _barrageWallController,
             child: Container()),
       ),
       Positioned(
@@ -125,7 +129,9 @@ class _LiveRoomPageState extends State<LiveRoomPage>
           },
           child: _isVideoControlAreaShowing
               ? videoPlayerControlArea()
-              : Container(color: Colors.transparent,),
+              : Container(
+                  color: Colors.transparent,
+                ),
         ),
       )
     ]);
@@ -161,7 +167,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
           ),
           onPressed: () {
             if (_barrageEditingController.text.isEmpty) return;
-            barrageWallController.send([
+            _barrageWallController.send([
               Bullet(
                   child: StrokeTextWidget(
                     _barrageEditingController.text,
@@ -176,7 +182,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
     );
   }
 
-  Widget videoPlayerControlArea(){
+  Widget videoPlayerControlArea() {
     return Align(
       alignment: Alignment.topLeft,
       child: ShaderMask(
@@ -196,45 +202,101 @@ class _LiveRoomPageState extends State<LiveRoomPage>
               decoration: const BoxDecoration(
                 border: Border(
                     top: BorderSide(color: Color(0xffeeeeee), width: 0),
-                    bottom: BorderSide(color: Colors.white, width: 0)
-                ),
+                    bottom: BorderSide(color: Colors.white, width: 0)),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Row(
                     children: [
-                      _videoPlayerController.value.isPlaying?
-                      IconButton(
-                        icon: const Icon(
-                          Icons.pause,
-                          color: Colors.white,
-                          size: 24.0,
+                      _videoPlayerController.value.isPlaying
+                          ? IconButton(
+                              icon: const Icon(
+                                Icons.pause,
+                                color: Colors.white,
+                                size: 24.0,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _videoPlayerController.pause();
+                                });
+                              },
+                            )
+                          : IconButton(
+                              icon: const Icon(
+                                Icons.play_arrow,
+                                color: Colors.white,
+                                size: 24.0,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _videoPlayerController.play();
+                                });
+                              },
+                            ),
+
+                      const Expanded(child: SizedBox()),
+
+                      if (_isBarrageShowing)
+                        GestureDetector(
+                          child: SvgPicture.asset("assets/icon/barrage_off.svg",
+                              width: 24, height: 24,
+                            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),),
+                          onTap: () {
+                            setState(() {
+                              _isBarrageShowing = false;
+                              _barrageWallController.clear();
+                            });
+                          },
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _videoPlayerController.pause();
-                          });
-                        },
-                      ):
-                      IconButton(
-                        icon: const Icon(
-                          Icons.play_arrow,
-                          color: Colors.white,
-                          size: 24.0,
+
+                      if (!_isBarrageShowing)
+                        GestureDetector(
+                          child: SvgPicture.asset("assets/icon/barrage_on.svg",
+                              width: 24, height: 24,
+                            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),),
+                          onTap: () {
+                            setState(() {
+                              _isBarrageShowing = true;
+                            });
+                          },
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _videoPlayerController.play();
-                          });
-                        },
+
+                      const SizedBox(
+                        width: 10,
                       ),
+
+                      if (!_isFullScreen)
+                        IconButton(
+                          icon: const Icon(
+                            Icons.fullscreen,
+                            color: Colors.white,
+                            size: 24.0,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isFullScreen = true;
+                            });
+                          },
+                        ),
+
+                      if (_isFullScreen)
+                        IconButton(
+                          icon: const Icon(
+                            Icons.fullscreen_exit,
+                            color: Colors.white,
+                            size: 24.0,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isFullScreen = false;
+                            });
+                          },
+                        ),
                     ],
                   ),
                 ],
-              )
-          )
-      ),
+              ))),
     );
   }
 }
