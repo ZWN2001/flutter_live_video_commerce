@@ -24,7 +24,6 @@ class _LiveRoomPageState extends State<LiveRoomPage>
     with TickerProviderStateMixin {
   final _barrageWallController = BarrageWallController();
   Random random = Random();
-  final _textEditingController = TextEditingController();
   late List<Bullet> bullets;
   late VideoPlayerController _videoPlayerController;
   final TextEditingController _barrageEditingController =

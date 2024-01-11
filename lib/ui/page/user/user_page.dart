@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:live_video_commerce/ui/page/login_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_cart_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_history_page.dart';
 
@@ -63,17 +66,25 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const SizedBox(width: 24,),
+
+                ///头像
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      ClipOval(
-                        child: SizedBox(
-                          width: 64,
-                          height: 64,
-                          child: Image.network(_user.avatar),
+                      GestureDetector(
+                        child: ClipOval(
+                          child: SizedBox(
+                            width: 64,
+                            height: 64,
+                            child: Image.network(_user.avatar),
+                          ),
                         ),
+                        onTap: () {
+                          Get.to(() => const LoginPage());
+                          //TODO
+                        },
                       ),
                       const SizedBox(height: 72,),
                     ],

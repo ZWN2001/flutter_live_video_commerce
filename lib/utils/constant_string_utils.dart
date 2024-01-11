@@ -1,6 +1,7 @@
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 class ConstantStringUtils{
+  static const String appTitle = '带货直播机';
   static const ClassicHeader classicHeader = ClassicHeader(
     idleText: '下拉刷新',
     refreshingText: '正在刷新',
