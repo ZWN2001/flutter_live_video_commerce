@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
-      logo: 'assets/images/logo.png',
+      logo: 'assets/logo.png',
       title: ConstantStringUtils.appTitle,
       theme: LoginTheme(
         pageColorDark: Colors.green,
