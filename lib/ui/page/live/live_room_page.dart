@@ -61,26 +61,25 @@ class _LiveRoomPageState extends State<LiveRoomPage>
 
   @override
   Widget build(BuildContext context) {
+    return _liveRoomHorizontal();
+  }
+
+  Widget _liveRoomHorizontal() {
     return Scaffold(
         appBar: AppBar(title: const Text("直播")),
-        // floatingActionButton: Switch(
-        //   value: barrageWallController.isEnabled,
-        //   onChanged: (updateTo) {
-        //     barrageWallController.isEnabled
-        //         ? barrageWallController.disable()
-        //         : barrageWallController.enable();
-        //     setState(() {});
-        //   },
-        // ),
         body: Column(children: <Widget>[
           SizedBox(
             height: Get.width * Get.size.aspectRatio + 90,
-            child: videoArea(),
+            child: _videoArea(),
           ),
-          const Expanded(child: ChatArea()),
-          // ElevatedButton(
-          //     onPressed: () => barrageWallController.clear(),
-          //     child: const Text('清空弹幕')),
+          const Expanded(
+              child: Stack(
+                children: [
+                  ChatArea(),
+                  //TODO
+                ],
+              )
+          ),
           const SizedBox(
             height: 8,
           ),
@@ -91,7 +90,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
         ]));
   }
 
-  Widget videoArea() {
+  Widget _videoArea() {
     return Stack(children: <Widget>[
       Positioned(
           top: 0,
