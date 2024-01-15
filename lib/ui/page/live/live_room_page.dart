@@ -12,7 +12,7 @@ import 'package:video_player/video_player.dart';
 import '../../../utils/stroke_text_widget.dart';
 
 class LiveRoomPage extends StatefulWidget {
-  final int roomid;
+  final String roomid;
 
   const LiveRoomPage({Key? key, required this.roomid}) : super(key: key);
 

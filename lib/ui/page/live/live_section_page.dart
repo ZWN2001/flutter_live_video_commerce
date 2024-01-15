@@ -91,7 +91,7 @@ class LiveSectionPageState extends State<LiveSectionPage> with SingleTickerProvi
           tabAlignment: TabAlignment.start,
           isScrollable: true,
           tabs: _sections
-              .map((section) => Tab(text: section.title))
+              .map((section) => Tab(text: section.sectionName))
               .toList(),
         ),
       ),
@@ -104,7 +104,7 @@ class LiveSectionPageState extends State<LiveSectionPage> with SingleTickerProvi
       _loading = true;
     });
     // _sections = await SectionAPI.sectionList();
-    Section s = Section(id: 1,description: "推荐", title: "分区1",);
+    Section s = Section(sid: "1", sectionName: "分区1",);
     _sections = [s,s];
     _tabController = TabController(length: _sections.length, vsync: this);
     _loading = false;

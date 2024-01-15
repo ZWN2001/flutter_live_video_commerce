@@ -7,6 +7,7 @@ import 'package:live_video_commerce/ui/page/user/shopping_history_page.dart';
 
 import '../../../entity/commodity.dart';
 import '../../../entity/order.dart';
+import '../../../entity/receiving_info.dart';
 import '../../../entity/user.dart';
 import '../../../utils/constant_string_utils.dart';
 
@@ -167,33 +168,33 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
     );
 
     Commodity commodity = Commodity(
-      id: "1",
-      name: "Test Commodity",
+      cid: "1",
+      commodityName: "Test Commodity",
       anchorId: "123",
       anchorName: "Test Anchor",
       price: 99.99,
       freight: 5.0,
       specification: "Sample Specification",
-      image: "https://www.zwn2001.space/img/favicon.webp",
+      imageUrl: "https://www.zwn2001.space/img/favicon.webp",
     );
 
-    OrderedUser orderedUser = OrderedUser(
-      name: "Test User",
+    ReceivingInfo receivingInfo = ReceivingInfo(
+      name: "John Doe",
       phone: "1234567890",
       address: "123 Main St, City, State",
     );
 
     Order order = Order(
-      orderId: "1",
-      commodity: commodity,
-      user: orderedUser,
+      oid: "1",
+      commodity: [commodity],
+      receivingInfo: receivingInfo,
       status: "paid",
       createdAt: "2022-01-01 10:00:00",
       payAt: "2022-01-01 10:00:00",
       shipAt: "2022-01-01 10:00:00",
       completeAt: "2022-01-01 10:00:00",
       totalPrice: 104.99,
-      quantity: 1,
+      quantity: [1],
     );
 
     orders = [order,order,order,order,order,order,order,order,order,order,order,order,order];

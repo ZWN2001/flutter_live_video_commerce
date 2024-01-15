@@ -29,7 +29,7 @@ class MyOrderCard extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            order.commodity.name,
+            order.commodity[0].commodityName,
             style: const TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.bold,
@@ -55,7 +55,7 @@ class MyOrderCard extends StatelessWidget {
           child: SizedBox(
             width: 90,
             height: 90,
-            child: Image.network(order.commodity.image),
+            child: Image.network(order.commodity[0].imageUrl),
           ),
         ),
 
@@ -66,14 +66,14 @@ class MyOrderCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                order.commodity.name,
+                order.commodity[0].commodityName,
                 style: const TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                order.commodity.specification,
+                order.commodity[0].specification,
                 style: const TextStyle(
                   fontSize: 14.0,
                 ),
@@ -88,7 +88,7 @@ class MyOrderCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              '￥${order.commodity.price}',
+              '￥${order.commodity[0].price}',
               style: const TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold,

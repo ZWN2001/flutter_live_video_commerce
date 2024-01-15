@@ -83,13 +83,11 @@ class LiveSectionDetailPageState extends State<LiveSectionDetailPage>{
   Future<void> _fetchData() async {
     _swiperImageUrlList = [];
     LiveRoomMini mini = LiveRoomMini(
-    roomId: 1,
-    title: "title",
+    rid: "1",
+    roomName: "title",
     coverUrl: "https://live-cover.msstatic.com/huyalive/1199533567890-1199533567890-5315847976780824576-2399067259236-10057-A-0-1/20240104140701.jpg",
     anchorName: "anchorName",
     onlineCount: 1,
-    status: 1,
-    roomSectionName: "roomSectionName",
     );
     _liveRoomMiniList = [mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,];
   }

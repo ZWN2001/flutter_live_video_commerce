@@ -50,7 +50,7 @@ class LiveRoomCard extends StatelessWidget {
           //   ],
           // ),
           onTap: () {
-            Get.to(() => LiveRoomPage(roomid: liveRoom.roomId));
+            Get.to(() => LiveRoomPage(roomid: liveRoom.rid));
           }
       ),
     );

@@ -54,30 +54,3 @@ class User {
   }
 }
 
-class OrderedUser{
-  String name;
-  String phone;
-  String address;
-
-  OrderedUser({
-    required this.name,
-    required this.phone,
-    required this.address,
-  });
-
-  factory OrderedUser.fromJson(Map<String, dynamic> json) {
-    return OrderedUser(
-      name: json['name'] as String,
-      phone: json['phone'] as String,
-      address: json['address'] as String,
-    );
-  }
-
-  Map<String, dynamic> toJson () {
-    return {
-      'name': name,
-      'phone': phone,
-      'address': address,
-    };
-  }
-}
