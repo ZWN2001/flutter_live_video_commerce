@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:live_video_commerce/ui/page/search_page.dart';
 
 import '../../../entity/section.dart';
 import 'live_section_detail_page.dart';
@@ -39,7 +40,7 @@ class LiveSectionPageState extends State<LiveSectionPage> with SingleTickerProvi
               child: GestureDetector(
                 onTap: () {
                   //TODO 搜索
-                  // Get.to(() => const ForumSearchPage());
+                  Get.to(() => const SearchPage());
                 },
                 child: Container(
                   height: 40,
