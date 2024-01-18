@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barrage/flutter_barrage.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -10,6 +11,7 @@ import 'package:live_video_commerce/ui/widget/live_room_chat_area.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../utils/stroke_text_widget.dart';
+import 'live_full_screen_page.dart';
 
 class LiveRoomPage extends StatefulWidget {
   final String roomid;
@@ -25,12 +27,12 @@ class _LiveRoomPageState extends State<LiveRoomPage>
   final _barrageWallController = BarrageWallController();
   Random random = Random();
   late List<Bullet> bullets;
+  late Future<void> _initializeVideoPlayerFuture;
+  late StateSetter _reloadSpeedDialState;
   late VideoPlayerController _videoPlayerController;
   final TextEditingController _barrageEditingController =
       TextEditingController();
-  bool _isVideoControlAreaShowing = false;
   bool _isBarrageShowing = false;
-  bool _isFullScreen = false;
   TextStyle barrageTextStyle = const TextStyle(
     color: Colors.white,
     fontSize: 16,
@@ -41,37 +43,29 @@ class _LiveRoomPageState extends State<LiveRoomPage>
   @override
   void initState() {
     super.initState();
-    bullets = List<Bullet>.generate(1000, (i) {
-      final showTime = random.nextInt(60000); // in 60s
-      return Bullet(
-          child: StrokeTextWidget(
-            '$i-$showTime',
-            textStyle: barrageTextStyle,
-          ),
-          showTime: showTime);
-    });
-
-    _videoPlayerController = VideoPlayerController.networkUrl(
-        Uri.parse('http://202.194.15.142:7001/live/movie.flv'))
-      ..initialize().then((_) {
-        _videoPlayerController.play();
-        setState(() {});
-      });
+    _fetchData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _liveRoomHorizontal();
-  }
-
-  Widget _liveRoomHorizontal() {
     return Scaffold(
         appBar: AppBar(title: const Text("直播")),
+        floatingActionButton: StatefulBuilder(
+          builder: (context, setState) {
+            _reloadSpeedDialState = setState;
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _videoPlayerControlArea(),
+                const SizedBox(
+                  height: 48,
+                ),
+              ],
+            );
+          },
+        ),
         body: Column(children: <Widget>[
-          SizedBox(
-            height: Get.width * Get.size.aspectRatio + 90,
-            child: _videoArea(),
-          ),
+           _videoArea(),
           const Expanded(
               child: Stack(
                 children: [
@@ -80,60 +74,75 @@ class _LiveRoomPageState extends State<LiveRoomPage>
                 ],
               )
           ),
-          const SizedBox(
-            height: 8,
-          ),
+          const SizedBox(height: 8,),
           _bottomArea(),
-          const SizedBox(
-            height: 8,
-          )
+          const SizedBox(height: 8,)
         ]));
   }
 
-  Widget _videoArea() {
-    return Stack(children: <Widget>[
-      Positioned(
-          top: 0,
-          child: Column(
-            children: [
-              Container(
-                width: Get.width,
-                height: Get.width * Get.size.aspectRatio + 90,
-                color: Colors.blue,
-              ),
-              // const ChatArea()
-            ],
-          )),
-      Positioned(
-        top: 14,
-        width: Get.width,
-        height: Get.width * Get.size.aspectRatio + 92,
-        child: BarrageWall(
-            debug: false,
-            safeBottomHeight: 60,
-            bullets: bullets,
-            controller: _barrageWallController,
-            child: Container()),
-      ),
-      Positioned(
-        top: 0,
-        width: Get.width,
-        height: Get.width * Get.size.aspectRatio + 90,
-        child: GestureDetector(
-          onTap: () {
-            setState(() {
-              _isVideoControlAreaShowing = !_isVideoControlAreaShowing;
-            });
-          },
-          child: _isVideoControlAreaShowing
-              ? videoPlayerControlArea()
-              : Container(
-                  color: Colors.transparent,
-                ),
-        ),
-      )
-    ]);
+  Widget _videoArea(){
+    return FutureBuilder(
+      future: _initializeVideoPlayerFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return AspectRatio(
+            aspectRatio: _videoPlayerController.value.aspectRatio,
+            child: VideoPlayer(_videoPlayerController),
+          );
+        } else {
+          return SizedBox(
+            height: Get.width * Get.size.aspectRatio + 40,
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        }
+      },
+    );
   }
+
+  // Widget _videoArea() {
+  //   return Stack(children: <Widget>[
+  //     Positioned(
+  //         top: 0,
+  //         child: Column(
+  //           children: [
+  //             Container(
+  //               width: Get.width,
+  //               height: Get.width * Get.size.aspectRatio + 90,
+  //               color: Colors.blue,
+  //             ),
+  //             // const ChatArea()
+  //           ],
+  //         )),
+  //     Positioned(
+  //       top: 14,
+  //       width: Get.width,
+  //       height: Get.width * Get.size.aspectRatio + 92,
+  //       child: BarrageWall(
+  //           debug: false,
+  //           safeBottomHeight: 60,
+  //           bullets: bullets,
+  //           controller: _barrageWallController,
+  //           child: Container()),
+  //     ),
+  //     Positioned(
+  //       top: 0,
+  //       width: Get.width,
+  //       height: Get.width * Get.size.aspectRatio + 90,
+  //       child: GestureDetector(
+  //         onTap: () {
+  //           setState(() {
+  //             _isVideoControlAreaShowing = !_isVideoControlAreaShowing;
+  //           });
+  //         },
+  //         child: _isVideoControlAreaShowing
+  //             ? videoPlayerControlArea()
+  //             : Container(
+  //                 color: Colors.transparent,
+  //               ),
+  //       ),
+  //     )
+  //   ]);
+  // }
 
   Widget _bottomArea() {
     return Row(
@@ -180,7 +189,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
     );
   }
 
-  Widget videoPlayerControlArea() {
+  Widget videoPlayerControlArea1() {
     return Align(
       alignment: Alignment.topLeft,
       child: ShaderMask(
@@ -235,36 +244,30 @@ class _LiveRoomPageState extends State<LiveRoomPage>
 
                       const Expanded(child: SizedBox()),
 
-                      if (_isBarrageShowing)
+                      if (!_isBarrageShowing)
                         GestureDetector(
                           child: SvgPicture.asset("assets/icon/barrage_off.svg",
                               width: 24, height: 24,
                             colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),),
                           onTap: () {
-                            setState(() {
-                              _isBarrageShowing = false;
-                              _barrageWallController.clear();
-                            });
+                            _bulletsStart();
+
                           },
                         ),
 
-                      if (!_isBarrageShowing)
+                      if (_isBarrageShowing)
                         GestureDetector(
                           child: SvgPicture.asset("assets/icon/barrage_on.svg",
                               width: 24, height: 24,
                             colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),),
                           onTap: () {
-                            setState(() {
-                              _isBarrageShowing = true;
-                            });
+                            _bulletsStop();
                           },
                         ),
 
                       const SizedBox(
                         width: 10,
                       ),
-
-                      if (!_isFullScreen)
                         IconButton(
                           icon: const Icon(
                             Icons.fullscreen,
@@ -272,29 +275,164 @@ class _LiveRoomPageState extends State<LiveRoomPage>
                             size: 24.0,
                           ),
                           onPressed: () {
-                            setState(() {
-                              _isFullScreen = true;
-                            });
+                            Get.to(() => const LiveFullScreenPage());
                           },
                         ),
 
-                      if (_isFullScreen)
-                        IconButton(
-                          icon: const Icon(
-                            Icons.fullscreen_exit,
-                            color: Colors.white,
-                            size: 24.0,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isFullScreen = false;
-                            });
-                          },
-                        ),
+                      // if (_isFullScreen)
+                      //   IconButton(
+                      //     icon: const Icon(
+                      //       Icons.fullscreen_exit,
+                      //       color: Colors.white,
+                      //       size: 24.0,
+                      //     ),
+                      //     onPressed: () {
+                      //       setState(() {
+                      //         _isFullScreen = false;
+                      //       });
+                      //     },
+                      //   ),
                     ],
                   ),
                 ],
               ))),
     );
+  }
+
+  Widget _videoPlayerControlArea(){
+    return SpeedDial(
+      key: const ValueKey(0),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+      ),
+      spacing: 16,
+      animationCurve: Curves.elasticInOut,
+      childMargin: EdgeInsets.zero,
+      childPadding: const EdgeInsets.all(8.0),
+      childrenButtonSize: const Size(64, 64),
+      animatedIcon: AnimatedIcons.menu_close,
+      closeManually: true,
+      children: [
+        _videoPlayerController.value.isPlaying
+            ? SpeedDialChild(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Icon(
+              Icons.pause,
+              color: Get.theme.colorScheme.primary,
+            ),
+            // label: '暂停',
+            labelBackgroundColor: Get.theme.colorScheme.primary,
+            labelStyle: TextStyle(color: Get.theme.colorScheme.onPrimary),
+            onTap: () {
+              setState(() {
+                _videoPlayerController.pause();
+              });
+            })
+            : SpeedDialChild(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Icon(
+              Icons.play_arrow,
+              color: Get.theme.colorScheme.primary,
+            ),
+            labelBackgroundColor: Get.theme.colorScheme.primary,
+            labelStyle: TextStyle(color: Get.theme.colorScheme.onPrimary),
+            onTap: () {
+              setState(() {
+                _videoPlayerController.play();
+              });
+            }),
+
+        _isBarrageShowing?
+
+        SpeedDialChild(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: SvgPicture.asset("assets/icon/barrage_off.svg",
+              width: 24, height: 24,
+              colorFilter: ColorFilter.mode(Get.theme.colorScheme.primary, BlendMode.srcIn),),
+            labelBackgroundColor: Get.theme.colorScheme.primary,
+            labelStyle: TextStyle(color: Get.theme.colorScheme.onPrimary),
+            onTap: () {
+              _bulletsStop();
+              _reloadSpeedDialState;
+            })
+            :
+        SpeedDialChild(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: SvgPicture.asset("assets/icon/barrage_on.svg",
+              width: 24, height: 24,
+              colorFilter: ColorFilter.mode(Get.theme.colorScheme.primary, BlendMode.srcIn),),
+            labelBackgroundColor: Get.theme.colorScheme.primary,
+            labelStyle: TextStyle(color: Get.theme.colorScheme.onPrimary),
+            onTap: () {
+              _bulletsStart();
+              _reloadSpeedDialState;
+            }),
+        SpeedDialChild(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            child: Icon(
+               Icons.star_border_rounded,
+              color: Get.theme.colorScheme.primary,
+            ),
+            labelBackgroundColor: Get.theme.colorScheme.primary,
+            labelStyle: TextStyle(color: Get.theme.colorScheme.onPrimary),
+            onTap: () async {
+              if (mounted) {
+                setState(() {
+                  // _isFavor = !_isFavor;
+                });
+              }
+
+            })
+      ],
+    );
+  }
+
+
+
+  Future<void> _fetchData() async {
+    _bulletsStart();
+
+    _videoPlayerController = VideoPlayerController.networkUrl(
+        Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',));
+    _initializeVideoPlayerFuture = _videoPlayerController.initialize();
+      //     .then((_) {
+      //   _videoPlayerController.play();
+      //   setState(() {});
+      // });
+  }
+
+  void _bulletsStart() {
+    if(!_isBarrageShowing){
+      _isBarrageShowing = true;
+      bullets = List<Bullet>.generate(1000, (i) {
+        final showTime = random.nextInt(60000); // in 60s
+        return Bullet(
+            child: StrokeTextWidget(
+              '$i-$showTime',
+              textStyle: barrageTextStyle,
+            ),
+            showTime: showTime);
+      });
+      setState(() {});
+    }
+  }
+
+  void _bulletsStop() {
+    if(_isBarrageShowing){
+      _isBarrageShowing = false;
+      _barrageWallController.clear();
+      bullets = [];
+      setState(() {});
+    }
   }
 }
