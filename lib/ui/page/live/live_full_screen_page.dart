@@ -11,7 +11,8 @@ import '../../../utils/stroke_text_widget.dart';
 
 
 class LiveFullScreenPage extends StatefulWidget {
-  const LiveFullScreenPage({super.key});
+  final VideoPlayerController videoPlayerController;
+  const LiveFullScreenPage({super.key, required this.videoPlayerController});
 
   @override
   LiveFullScreenPageState createState() => LiveFullScreenPageState();
@@ -22,7 +23,7 @@ class LiveFullScreenPageState extends State<LiveFullScreenPage> {
   final _barrageWallController = BarrageWallController();
   Random random = Random();
   late List<Bullet> bullets;
-  late VideoPlayerController _videoPlayerController;
+  // late VideoPlayerController _videoPlayerController;
   final TextEditingController _barrageEditingController =
   TextEditingController();
   bool _isVideoControlAreaShowing = false;
@@ -42,13 +43,6 @@ class LiveFullScreenPageState extends State<LiveFullScreenPage> {
 
   Future<void> _fetchData() async {
     _bulletsStart();
-
-    _videoPlayerController = VideoPlayerController.networkUrl(
-        Uri.parse('http://202.194.15.142:7001/live/movie.flv'))
-      ..initialize().then((_) {
-        _videoPlayerController.play();
-        setState(() {});
-      });
   }
 
   @override
@@ -56,7 +50,46 @@ class LiveFullScreenPageState extends State<LiveFullScreenPage> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     final size =MediaQuery.of(context).size;
-    return SafeArea(child: _videoArea(size.width, size.height));
+    return SizedBox(
+      height: size.height,
+      child: Stack(
+        children: [
+          Positioned(
+            left: 32,
+            height: size.height,
+            child: _videoArea(),
+          ),
+          Positioned(
+            top: 14,
+            width: Get.width,
+            height: size.height,
+            child: BarrageWall(
+                debug: false,
+                safeBottomHeight: 60,
+                bullets: bullets,
+                controller: _barrageWallController,
+                child: Container()),
+          ),
+          Positioned(
+            top: 0,
+            width: Get.width,
+            height: size.height,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isVideoControlAreaShowing = !_isVideoControlAreaShowing;
+                });
+              },
+              child: _isVideoControlAreaShowing
+                  ? _videoPlayerControlArea()
+                  : Container(
+                color: Colors.transparent,
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -66,53 +99,14 @@ class LiveFullScreenPageState extends State<LiveFullScreenPage> {
     super.dispose();
   }
 
-  Widget _videoArea(double width, double height) {
-    return Stack(children: <Widget>[
-      Positioned(
-          top: 0,
-          child: Column(
-            children: [
-              Container(
-                width: width,
-                height: width * Get.size.aspectRatio,
-                color: Colors.blue,
-              ),
-              // const ChatArea()
-            ],
-          )),
-      // if(_isBarrageShowing)
-      //   Positioned(
-      //     top: 14,
-      //     width: Get.width,
-      //     height: Get.width * Get.size.aspectRatio + 92,
-      //     child: BarrageWall(
-      //         debug: false,
-      //         safeBottomHeight: 60,
-      //         bullets: bullets,
-      //         controller: _barrageWallController,
-      //         child: Container()),
-      //   ),
-      Positioned(
-        top: 0,
-        width: width,
-        height: height,
-        child: GestureDetector(
-          onTap: () {
-            setState(() {
-              _isVideoControlAreaShowing = !_isVideoControlAreaShowing;
-            });
-          },
-          child: _isVideoControlAreaShowing
-              ? videoPlayerControlArea()
-              : Container(
-            color: Colors.transparent,
-          ),
-        ),
-      )
-    ]);
+  Widget _videoArea(){
+    return AspectRatio(
+      aspectRatio: widget.videoPlayerController.value.aspectRatio,
+      child: VideoPlayer(widget.videoPlayerController),
+    );
   }
 
-  Widget videoPlayerControlArea() {
+  Widget _videoPlayerControlArea() {
     return Align(
       alignment: Alignment.topLeft,
       child: ShaderMask(
@@ -139,7 +133,7 @@ class LiveFullScreenPageState extends State<LiveFullScreenPage> {
                 children: [
                   Row(
                     children: [
-                      _videoPlayerController.value.isPlaying
+                      widget.videoPlayerController.value.isPlaying
                           ? IconButton(
                         icon: const Icon(
                           Icons.pause,
@@ -148,7 +142,7 @@ class LiveFullScreenPageState extends State<LiveFullScreenPage> {
                         ),
                         onPressed: () {
                           setState(() {
-                            _videoPlayerController.pause();
+                            widget.videoPlayerController.pause();
                           });
                         },
                       )
@@ -160,7 +154,7 @@ class LiveFullScreenPageState extends State<LiveFullScreenPage> {
                         ),
                         onPressed: () {
                           setState(() {
-                            _videoPlayerController.play();
+                            widget.videoPlayerController.play();
                           });
                         },
                       ),
@@ -174,7 +168,6 @@ class LiveFullScreenPageState extends State<LiveFullScreenPage> {
                             colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),),
                           onTap: () {
                             _bulletsStart();
-
                           },
                         ),
 
@@ -198,7 +191,7 @@ class LiveFullScreenPageState extends State<LiveFullScreenPage> {
                           size: 24.0,
                         ),
                         onPressed: () {
-                          Get.to(() => const LiveFullScreenPage());
+                          Get.back();
                         },
                       ),
 
@@ -235,7 +228,9 @@ class LiveFullScreenPageState extends State<LiveFullScreenPage> {
             ),
             showTime: showTime);
       });
-      setState(() {});
+      if(mounted){
+        setState(() {});
+      }
     }
   }
 
@@ -243,8 +238,11 @@ class LiveFullScreenPageState extends State<LiveFullScreenPage> {
     if(_isBarrageShowing){
       _isBarrageShowing = false;
       _barrageWallController.clear();
-      bullets = [];
-      setState(() {});
+      _barrageWallController.disable();
+      bullets.clear();
+      if(mounted){
+        setState(() {});
+      }
     }
   }
 }

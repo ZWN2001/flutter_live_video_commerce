@@ -26,7 +26,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
     with TickerProviderStateMixin {
   final _barrageWallController = BarrageWallController();
   Random random = Random();
-  late List<Bullet> bullets;
+  List<Bullet> bullets = [];
   late Future<void> _initializeVideoPlayerFuture;
   late StateSetter _reloadSpeedDialState;
   bool _isVideoControlAreaShowing = false;
@@ -72,7 +72,10 @@ class _LiveRoomPageState extends State<LiveRoomPage>
              child: Stack(
                children: [
                  _videoArea(),
-                     Positioned(
+                 if(_isBarrageShowing)
+                   Visibility(
+                     visible: _isBarrageShowing,
+                     child: Positioned(
                        top: 14,
                        width: Get.width,
                        height: Get.width * Get.size.aspectRatio + 40,
@@ -83,6 +86,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
                            controller: _barrageWallController,
                            child: Container()),
                      ),
+                   ),
                      Positioned(
                        top: 0,
                        width: Get.width,
@@ -312,7 +316,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
                             size: 24.0,
                           ),
                           onPressed: () {
-                            Get.to(() => const LiveFullScreenPage());
+                            Get.to(() => LiveFullScreenPage(videoPlayerController: _videoPlayerController,));
                           },
                         ),
 
@@ -442,10 +446,6 @@ class _LiveRoomPageState extends State<LiveRoomPage>
     _videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',));
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
-      //     .then((_) {
-      //   _videoPlayerController.play();
-      //   setState(() {});
-      // });
   }
 
   void _bulletsStart() {
@@ -460,7 +460,9 @@ class _LiveRoomPageState extends State<LiveRoomPage>
             ),
             showTime: showTime);
       });
-      setState(() {});
+      if(mounted){
+        setState(() {});
+      }
     }
   }
 
@@ -468,8 +470,11 @@ class _LiveRoomPageState extends State<LiveRoomPage>
     if(_isBarrageShowing){
       _isBarrageShowing = false;
       _barrageWallController.clear();
-      bullets = [];
-      setState(() {});
+      _barrageWallController.disable();
+      bullets.clear();
+      if(mounted){
+        setState(() {});
+      }
     }
   }
 }
