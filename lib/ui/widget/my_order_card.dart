@@ -55,7 +55,7 @@ class MyOrderCard extends StatelessWidget {
           child: SizedBox(
             width: 90,
             height: 90,
-            child: Image.network(order.commodity[0].imageUrl),
+            child: Image.network(order.commodity[0].imageUrl[0]),
           ),
         ),
 

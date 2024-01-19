@@ -14,7 +14,7 @@ class Commodity{
   //商品规格
   String specification;
   //商品图片
-  String imageUrl;
+  List<String> imageUrl;
 
   Commodity({
     required this.cid,
@@ -36,7 +36,7 @@ class Commodity{
       price: json['price'] as double,
       freight: json['freight'] as double,
       specification: json['specification'] as String,
-      imageUrl: json['image'] as String,
+      imageUrl: json['image'] as List<String>,
     );
   }
 

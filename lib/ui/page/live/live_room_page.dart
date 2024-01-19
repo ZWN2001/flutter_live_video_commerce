@@ -13,6 +13,7 @@ import 'package:live_video_commerce/ui/widget/live_room_chat_area.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../utils/stroke_text_widget.dart';
+import '../commodity/commodity_detail_page.dart';
 import 'live_full_screen_page.dart';
 
 class LiveRoomPage extends StatefulWidget {
@@ -70,7 +71,29 @@ class _LiveRoomPageState extends State<LiveRoomPage>
                         return ListView(
                             children: [
                               const SizedBox(height: 8,),
-                              const Text("商品列表", textAlign: TextAlign.center,),
+                              Row(
+                                children: [
+                                  const SizedBox(width: 12,),
+                                  Text("${commodities[0].anchorName}的商品列表", textAlign: TextAlign.center,),
+                                  const Expanded(child: SizedBox.shrink(),),
+                                  InkWell(
+                                    child: const Column(
+                                      children: [
+                                        Icon(
+                                          Icons.shopping_cart_outlined,
+                                           color: Colors.grey,
+                                          size: 18,
+                                        ),
+                                        Text("购物车",style: TextStyle(color: Colors.grey,fontSize: 12),),
+                                      ],
+                                    ),
+                                    onTap: () {
+                                      //TODO: go to cart
+                                    },
+                                  ),
+                                  const SizedBox(width: 16,),
+                                ],
+                              ),
                               const Divider(),
                               ...commodities.map((Commodity commodity) {
                                 return _commodityListTile(commodity);
@@ -367,7 +390,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
       leading: ClipRRect(
           borderRadius: BorderRadius.circular(6),
         child: Image.network(
-          commodity.imageUrl,
+          commodity.imageUrl[0],
           fit: BoxFit.fill,
         )
       ),
@@ -391,8 +414,13 @@ class _LiveRoomPageState extends State<LiveRoomPage>
         )
       ),
       onTap: () {
-        // BotToast.showText(text: "添加购物车成功");
-        // _selectCommodity(commodity);
+        // Get.to(()=>CommodityDetailPage(commodity: commodity,));
+        showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return CommodityDetailPage(commodity: commodity,);
+          },
+        );
       },
     );
   }
@@ -510,7 +538,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
       price: 9.99,
       freight: 2.99,
       specification: "测试规格",
-      imageUrl: "https://www.zwn2001.space/img/favicon.webp",
+      imageUrl: ["https://www.zwn2001.space/img/favicon.webp"],
     );
 
     commodities=[testCommodity,testCommodity,testCommodity];

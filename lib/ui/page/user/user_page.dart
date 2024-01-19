@@ -175,7 +175,7 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
       price: 99.99,
       freight: 5.0,
       specification: "Sample Specification",
-      imageUrl: "https://www.zwn2001.space/img/favicon.webp",
+      imageUrl: ["https://www.zwn2001.space/img/favicon.webp"],
     );
 
     ReceivingInfo receivingInfo = ReceivingInfo(
