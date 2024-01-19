@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class ChatArea extends StatefulWidget {
   const ChatArea({super.key});
@@ -48,6 +49,9 @@ class ChatAreaState extends State<ChatArea> {
 
   @override
   Widget build(BuildContext context) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _chatController.animateTo(_chatController.position.maxScrollExtent, duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
+    });
     return ShaderMask(
         shaderCallback: (Rect bounds) {
           return const LinearGradient(
@@ -67,11 +71,13 @@ class ChatAreaState extends State<ChatArea> {
                 bottom: BorderSide(color: Colors.white, width: 0)
             ),
           ),
-          child: ListView(
-            controller: _chatController,
-            padding: const EdgeInsets.all(10),
-            children: _chatMsg(),
-          ),
+          child: ListView.builder(
+              controller: _chatController,
+              itemCount: msgData.length,
+              itemBuilder: (context, index) {
+                return _chatMsg()[index];
+              }
+          )
         )
     );
   }
