@@ -1,10 +1,12 @@
 import 'dart:math';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barrage/flutter_barrage.dart';
 // import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:live_video_commerce/entity/commodity.dart';
 
 // import 'package:live_video_commerce/entity/live_room.dart';
 import 'package:live_video_commerce/ui/widget/live_room_chat_area.dart';
@@ -27,8 +29,9 @@ class _LiveRoomPageState extends State<LiveRoomPage>
   final _barrageWallController = BarrageWallController();
   Random random = Random();
   List<Bullet> bullets = [];
+  late List<Commodity> commodities;
   late Future<void> _initializeVideoPlayerFuture;
-  late StateSetter _reloadSpeedDialState;
+  // late StateSetter _reloadSpeedDialState;
   bool _isVideoControlAreaShowing = false;
   late VideoPlayerController _videoPlayerController;
   final TextEditingController _barrageEditingController =
@@ -51,62 +54,81 @@ class _LiveRoomPageState extends State<LiveRoomPage>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("直播")),
-        floatingActionButton: StatefulBuilder(
-          builder: (context, setState) {
-            _reloadSpeedDialState = setState;
-            return const Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-
-                // _videoPlayerControlArea(),
-                SizedBox(
-                  height: 48,
-                ),
-              ],
-            );
-          },
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: Colors.blue,
+              child: IconButton(
+                  color: Colors.white,
+                  icon: const Icon(Icons.shopping_bag_outlined),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ListView(
+                            children: [
+                              const SizedBox(height: 8,),
+                              const Text("商品列表", textAlign: TextAlign.center,),
+                              const Divider(),
+                              ...commodities.map((Commodity commodity) {
+                                return _commodityListTile(commodity);
+                              }).toList(),
+                            ]
+                        );
+                      },
+                    );
+                  }
+              ),
+            ),
+            const SizedBox(
+              height: 48,
+            ),
+          ],
         ),
         body: Column(children: <Widget>[
-           SizedBox(
-             width: Get.width,
-             child: Stack(
-               children: [
-                 _videoArea(),
-                 if(_isBarrageShowing)
-                   Visibility(
-                     visible: _isBarrageShowing,
-                     child: Positioned(
-                       top: 14,
-                       width: Get.width,
-                       height: Get.width * Get.size.aspectRatio + 40,
-                       child: BarrageWall(
-                           debug: false,
-                           safeBottomHeight: 60,
-                           bullets: bullets,
-                           controller: _barrageWallController,
-                           child: Container()),
-                     ),
-                   ),
-                     Positioned(
-                       top: 0,
-                       width: Get.width,
-                       height: Get.width * Get.size.aspectRatio + 50,
-                       child: GestureDetector(
-                         onTap: () {
-                           setState(() {
-                             _isVideoControlAreaShowing = !_isVideoControlAreaShowing;
-                           });
-                         },
-                         child: _isVideoControlAreaShowing
-                             ? _videoPlayerControlArea()
-                             : Container(
-                           color: Colors.transparent,
-                         ),
-                       ),
-                     )
-               ],
-             ),
-           ),
+          SizedBox(
+            width: Get.width,
+            child: Stack(
+              children: [
+                _videoArea(),
+                if(_isBarrageShowing)
+                  Visibility(
+                    visible: _isBarrageShowing,
+                    child: Positioned(
+                      top: 14,
+                      width: Get.width,
+                      height: Get.width * Get.size.aspectRatio + 60,
+                      child: BarrageWall(
+                          debug: false,
+                          safeBottomHeight: 60,
+                          bullets: bullets,
+                          controller: _barrageWallController,
+                          child: Container()),
+                    ),
+                  ),
+                Positioned(
+                  top: 0,
+                  width: Get.width,
+                  height: Get.width * Get.size.aspectRatio + 50,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isVideoControlAreaShowing =
+                        !_isVideoControlAreaShowing;
+                      });
+                    },
+                    child: _isVideoControlAreaShowing
+                        ? _videoPlayerControlArea()
+                        : Container(
+                      color: Colors.transparent,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
           const Expanded(
               child: Stack(
                 children: [
@@ -339,6 +361,41 @@ class _LiveRoomPageState extends State<LiveRoomPage>
               ))),
     );
   }
+
+  Widget _commodityListTile(Commodity commodity){
+    return ListTile(
+      leading: ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+        child: Image.network(
+          commodity.imageUrl,
+          fit: BoxFit.fill,
+        )
+      ),
+      title: Text(commodity.commodityName),
+      subtitle: Text("单价：${commodity.price.toString()}"),
+      trailing: Container(
+          decoration: BoxDecoration(
+            color: Colors.orange,
+            borderRadius: BorderRadius.circular(12),
+          ),
+        child: IconButton(
+          icon: const Icon(
+            Icons.add_shopping_cart,
+            color: Colors.white,
+            size: 24.0,
+          ),
+          onPressed: () {
+            BotToast.showText(text: "添加购物车成功");
+            // _selectCommodity(commodity);
+          },
+        )
+      ),
+      onTap: () {
+        // BotToast.showText(text: "添加购物车成功");
+        // _selectCommodity(commodity);
+      },
+    );
+  }
   //
   // Widget _videoPlayerControlArea(){
   //   return SpeedDial(
@@ -438,14 +495,25 @@ class _LiveRoomPageState extends State<LiveRoomPage>
   //   );
   // }
 
-
-
   Future<void> _fetchData() async {
     _bulletsStart();
 
     _videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',));
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
+
+    Commodity testCommodity = Commodity(
+      cid: "123",
+      commodityName: "测试商品",
+      anchorId: "456",
+      anchorName: "测试主播",
+      price: 9.99,
+      freight: 2.99,
+      specification: "测试规格",
+      imageUrl: "https://www.zwn2001.space/img/favicon.webp",
+    );
+
+    commodities=[testCommodity,testCommodity,testCommodity];
   }
 
   void _bulletsStart() {
