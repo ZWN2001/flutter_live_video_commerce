@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:live_video_commerce/entity/commodity_specification.dart';
 import 'package:live_video_commerce/ui/page/login_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_cart_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_history_page.dart';
@@ -167,6 +168,13 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
       updatedAt: "2022-01-01 12:00:00",
     );
 
+    CommoditySpecification commoditySpecification = CommoditySpecification(
+      cid: "1",
+      id: "1",
+      imageUrl: "https://www.zwn2001.space/img/favicon.webp",
+      specification: "Sample Specification",
+    );
+
     Commodity commodity = Commodity(
       cid: "1",
       commodityName: "Test Commodity",
@@ -174,7 +182,7 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
       anchorName: "Test Anchor",
       price: 99.99,
       freight: 5.0,
-      specification: "Sample Specification",
+      specification: [commoditySpecification],
       imageUrl: ["https://www.zwn2001.space/img/favicon.webp"],
     );
 
@@ -188,7 +196,7 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
       oid: "1",
       commodity: [commodity],
       receivingInfo: receivingInfo,
-      status: "paid",
+      status: 0,
       createdAt: "2022-01-01 10:00:00",
       payAt: "2022-01-01 10:00:00",
       shipAt: "2022-01-01 10:00:00",

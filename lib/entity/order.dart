@@ -5,7 +5,7 @@ class Order{
   String oid;
   List<Commodity> commodity;
   ReceivingInfo receivingInfo;
-  String status;
+  int status;
   //订单创建时间
   String createdAt;
   //订单支付时间
@@ -37,7 +37,7 @@ class Order{
       oid: json['orderId'] as String,
       commodity: (json['commodity'] as List<dynamic>).map((e) => Commodity.fromJson(e)).toList(),
       receivingInfo: ReceivingInfo.fromJson(json['user']),
-      status: json['status'] as String,
+      status: json['status'] as int,
       createdAt: json['createdAt'] as String,
       payAt: json['payAt'] as String,
       shipAt: json['shipAt'] as String,

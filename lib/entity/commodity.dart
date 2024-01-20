@@ -1,3 +1,5 @@
+import 'package:live_video_commerce/entity/commodity_specification.dart';
+
 class Commodity{
   //商品id
   String cid;
@@ -12,7 +14,7 @@ class Commodity{
   //运费
   double freight;
   //商品规格
-  String specification;
+  List<CommoditySpecification> specification;
   //商品图片
   List<String> imageUrl;
 
@@ -35,7 +37,7 @@ class Commodity{
       anchorName: json['anchorName'] as String,
       price: json['price'] as double,
       freight: json['freight'] as double,
-      specification: json['specification'] as String,
+      specification: (json['specification'] as List<dynamic>).map((e) => CommoditySpecification.fromJson(e)).toList(),
       imageUrl: json['image'] as List<String>,
     );
   }

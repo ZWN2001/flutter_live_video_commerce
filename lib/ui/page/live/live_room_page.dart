@@ -12,6 +12,7 @@ import 'package:live_video_commerce/entity/commodity.dart';
 import 'package:live_video_commerce/ui/widget/live_room_chat_area.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../entity/commodity_specification.dart';
 import '../../../utils/stroke_text_widget.dart';
 import '../commodity/commodity_detail_page.dart';
 import 'live_full_screen_page.dart';
@@ -530,6 +531,13 @@ class _LiveRoomPageState extends State<LiveRoomPage>
         Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',));
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
 
+    CommoditySpecification commoditySpecification = CommoditySpecification(
+      cid: "1",
+      id: "1",
+      imageUrl: "https://www.zwn2001.space/img/favicon.webp",
+      specification: "Sample Specification",
+    );
+
     Commodity testCommodity = Commodity(
       cid: "123",
       commodityName: "测试商品",
@@ -537,7 +545,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
       anchorName: "测试主播",
       price: 9.99,
       freight: 2.99,
-      specification: "测试规格",
+      specification: [commoditySpecification,commoditySpecification],
       imageUrl: ["https://www.zwn2001.space/img/favicon.webp"],
     );
 

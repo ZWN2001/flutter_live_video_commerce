@@ -37,7 +37,7 @@ class MyOrderCard extends StatelessWidget {
           ),
         ),
         Text(
-          order.status,
+          order.status.toString(),
           style: const TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
@@ -73,7 +73,7 @@ class MyOrderCard extends StatelessWidget {
                 ),
               ),
               Text(
-                order.commodity[0].specification,
+                order.commodity[0].specification[0].specification,
                 style: const TextStyle(
                   fontSize: 14.0,
                 ),
