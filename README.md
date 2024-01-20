@@ -2,6 +2,8 @@
 
 直播带货
 
+喜欢滥用SizedBox是个大毛病，得改
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

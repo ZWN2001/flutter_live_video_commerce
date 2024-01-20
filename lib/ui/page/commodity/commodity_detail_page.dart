@@ -5,6 +5,8 @@ import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:get/get.dart';
 
 import '../../../entity/commodity.dart';
+import '../../../entity/order.dart';
+import 'order_confirm_page.dart';
 
 class CommodityDetailPage extends StatefulWidget {
   final Commodity commodity;
@@ -160,6 +162,21 @@ class CommodityDetailPageState extends State<CommodityDetailPage> {
                           color: Colors.white,
                         ),))
                 ),),
+              onTap: (){
+                Order order = Order(
+                  oid: "1",
+                  commodity: [widget.commodity],
+                  receivingInfo: null,
+                  status: 0,
+                  createdAt: "2022-01-01 10:00:00",
+                  payAt: "2022-01-01 10:00:00",
+                  shipAt: "",
+                  completeAt: "",
+                  totalPrice: 104.99,
+                  quantity: [1],
+                );
+                Get.to(()=>OrderConfirmPage(order: order,));
+              },
             ),
             const SizedBox(width: 12,),
           ],

@@ -4,7 +4,7 @@ import 'package:live_video_commerce/entity/receiving_info.dart';
 class Order{
   String oid;
   List<Commodity> commodity;
-  ReceivingInfo receivingInfo;
+  ReceivingInfo? receivingInfo;
   int status;
   //订单创建时间
   String createdAt;
@@ -51,7 +51,7 @@ class Order{
     return {
       'orderId': oid,
       'commodity': commodity.map((e) => e.toJson()).toList(),
-      'user': receivingInfo.toJson(),
+      'user': receivingInfo?.toJson(),
       'status': status,
       'createdAt': createdAt,
       'payAt': payAt,
