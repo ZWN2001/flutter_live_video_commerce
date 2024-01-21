@@ -21,20 +21,13 @@ class UserPage extends StatefulWidget{
 }
 
 class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
-  late final TabController _tabController;
   late User _user;
-  late Map<String,Widget> _userShoppingSections;
   late List<Order> orders;
 
   @override
   void initState() {
     super.initState();
     _fetchData();
-    _userShoppingSections = {
-      ConstantStringUtils.shoppingHistory : ShoppingHistoryPage(orderList: orders,),
-      ConstantStringUtils.shoppingCart : const ShoppingCartPage(),
-    };
-    _tabController = TabController(length: _userShoppingSections.length, vsync: this);
   }
 
 
@@ -137,20 +130,145 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
   }
 
   Widget _buildBody() {
-    return Column(
-      children: [
-        TabBar(
-          controller: _tabController,
-          tabs: _userShoppingSections.keys.map((e) => Tab(text: e,)).toList(),
+    return Container(
+      color: Colors.grey[200],
+      child:MediaQuery.removePadding(
+        removeTop: true,
+        context: context,
+        child: ListView(
+          primary: false,
+          shrinkWrap: true,
+          children: [
+            _myOrdersCard(),
+            const SizedBox(height: 8,),
+            _mySettingsCard(),
+
+            Padding(padding: const EdgeInsets.only(left: 32,right: 32,top: 16),child: ElevatedButton(onPressed: (){}, child: const Text('退出登录'),),)
+
+          ],
         ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: _userShoppingSections.values.toList()
-          ),
-        ),
-      ]);
+      ),
+
+    );
   }
+
+  Widget _myOrdersCard(){
+    return Card(
+      child: Column(
+        children: [
+          const SizedBox(height: 8,),
+          Row(
+            children: [
+              const SizedBox(width: 16,),
+              const Text('我的订单',style: TextStyle(fontSize: 16),),
+              Expanded(
+                child: Container(),
+              ),
+              TextButton(
+                child: const Text('查看全部 >'),
+                onPressed: () {
+                  Get.to(()=>const ShoppingHistoryPage());
+                  //TODO
+                },
+              ),
+              const SizedBox(width: 6,),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(child: TextButton(
+                child: const Column(
+                  children: [
+                    Icon(Icons.payment),
+                    Text('待付款'),
+                  ],
+                ),
+                onPressed: () {
+                  //TODO
+                },
+              ),),
+              Expanded(child: TextButton(
+                child: const Column(
+                  children: [
+                    Icon(Icons.access_time_outlined),
+                    Text('待发货'),
+                  ],
+                ),
+                onPressed: () {
+                  //TODO
+                },
+              ),),
+              Expanded(child: TextButton(
+                child: const Column(
+                  children: [
+                    Icon(Icons.local_shipping),
+                    Text('待收货'),
+                  ],
+                ),
+                onPressed: () {
+                  //TODO
+                },
+              ),),
+              Expanded(child: TextButton(
+                child: const Column(
+                  children: [
+                    Icon(Icons.history),
+                    Text('浏览历史'),
+                  ],
+                ),
+                onPressed: () {
+                  //TODO
+                },
+              ),),
+            ],
+          ),
+          const SizedBox(height: 8,)
+        ],
+      ),
+    );
+  }
+
+  Widget _mySettingsCard(){
+    return Card(
+      child: Column(
+        children: [
+          _settingsRow(Icons.shopping_cart_outlined, '我的购物车', () {
+            Get.to(() => const ShoppingCartPage());
+          }),
+          const Divider(height: 0,),
+          _settingsRow(Icons.star_border, '我关注的直播间', () {
+
+          }),
+          const Divider(height: 0,),
+          _settingsRow(Icons.location_on_outlined, '我的收货地址', () {
+
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _settingsRow(IconData icon,String title, VoidCallback onTap){
+    return InkWell(
+      onTap: onTap,
+      child: SizedBox(
+        height: 64,
+        child: Row(
+          children: [
+            const SizedBox(width: 16,),
+            Icon(icon,color: Colors.blue,),
+            const SizedBox(width: 16,),
+            Expanded(child: Text(title,style: const TextStyle(fontSize: 16),)),
+            const SizedBox(width: 16,),
+            const Icon(Icons.arrow_forward_ios,size: 18,color: Colors.grey,),
+            const SizedBox(width: 16,),
+          ],
+        ),
+      ),
+
+    );
+  }
+
 
 
   Future<void> _fetchData() async {
@@ -168,44 +286,6 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
       updatedAt: "2022-01-01 12:00:00",
     );
 
-    CommoditySpecification commoditySpecification = CommoditySpecification(
-      cid: "1",
-      id: "1",
-      imageUrl: "https://www.zwn2001.space/img/favicon.webp",
-      specification: "Sample Specification",
-    );
-
-    Commodity commodity = Commodity(
-      cid: "1",
-      commodityName: "Test Commodity",
-      anchorId: "123",
-      anchorName: "Test Anchor",
-      price: 99.99,
-      freight: 5.0,
-      specification: [commoditySpecification],
-      imageUrl: ["https://www.zwn2001.space/img/favicon.webp"],
-    );
-
-    ReceivingInfo receivingInfo = ReceivingInfo(
-      name: "John Doe",
-      phone: "1234567890",
-      address: "123 Main St, City, State",
-    );
-
-    Order order = Order(
-      oid: "1",
-      commodity: [commodity],
-      receivingInfo: receivingInfo,
-      status: 0,
-      createdAt: "2022-01-01 10:00:00",
-      payAt: "2022-01-01 10:00:00",
-      shipAt: "2022-01-01 10:00:00",
-      completeAt: "2022-01-01 10:00:00",
-      totalPrice: 104.99,
-      quantity: [1],
-    );
-
-    orders = [order,order,order,order,order,order,order,order,order,order,order,order,order];
   }
 
 }
