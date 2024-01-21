@@ -5,7 +5,17 @@ import 'package:flutter/material.dart';
 class ItemCalculateWidget extends StatefulWidget {
   final int count;
   final Function(int) onCountChanged;
-  const ItemCalculateWidget({Key? key, required this.onCountChanged, required this.count}) : super(key: key);
+  final MainAxisAlignment? mainAxisAlignment;
+  final CrossAxisAlignment? crossAxisAlignment;
+  final double? size;
+  const ItemCalculateWidget({
+    Key? key,
+    required this.onCountChanged,
+    required this.count,
+    this.mainAxisAlignment,
+    this.crossAxisAlignment,
+    this.size,
+  }) : super(key: key);
 
   @override
   State<ItemCalculateWidget> createState() => _ItemCalculateWidgetState();
@@ -22,6 +32,8 @@ class _ItemCalculateWidgetState extends State<ItemCalculateWidget> {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: widget.mainAxisAlignment ?? MainAxisAlignment.start,
+      crossAxisAlignment: widget.crossAxisAlignment ?? CrossAxisAlignment.center,
       children: <Widget>[
         _reduceBtn(context),
         const SizedBox(width: 8,),
@@ -43,8 +55,8 @@ class _ItemCalculateWidgetState extends State<ItemCalculateWidget> {
         widget.onCountChanged(-1);
       },
       child: Container(
-        width: 32,
-        height: 32,
+        width: widget.size ?? 32,
+        height: widget.size ?? 32,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: count == 1 ? Colors.grey[300] : Colors.white,
@@ -58,8 +70,8 @@ class _ItemCalculateWidgetState extends State<ItemCalculateWidget> {
   // 商品数量
   Widget _numArea(context) {
     return Container(
-      width: 48,
-      height: 30,
+      width: widget.size == null ? 48 : widget.size! * 1.5,
+      height: widget.size == null ? 30 : widget.size! -2,
       alignment: Alignment.center,
       color: Colors.white,
       child: Text('$count'),
@@ -75,8 +87,8 @@ class _ItemCalculateWidgetState extends State<ItemCalculateWidget> {
         setState(() {});
       },
       child: Container(
-        width: 32,
-        height: 32,
+        width: widget.size ?? 32,
+        height: widget.size ?? 32,
         alignment: Alignment.center,
         decoration: const BoxDecoration(
           color: Colors.white,
