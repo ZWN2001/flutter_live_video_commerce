@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 
 import '../../entity/order.dart';
+import 'item_calculate_widget.dart';
 
 ///TODO：多个商品
-class OrderDetailCard extends StatelessWidget {
+class OrderDetailCard extends StatefulWidget {
   final Order order;
   const OrderDetailCard({Key? key, required this.order}) : super(key: key);
 
+  @override
+  State<OrderDetailCard> createState() => _OrderDetailCardState();
+}
+
+class _OrderDetailCardState extends State<OrderDetailCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -21,7 +27,7 @@ class OrderDetailCard extends StatelessWidget {
                     const Icon(Icons.storefront, color: Colors.grey,),
                     const SizedBox(width: 8.0,),
                     Text(
-                      order.commodity[0].commodityName,
+                      widget.order.commodity[0].commodityName,
                       style: const TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
@@ -39,7 +45,7 @@ class OrderDetailCard extends StatelessWidget {
                     child: SizedBox(
                       width: 90,
                       height: 90,
-                      child: Image.network(order.commodity[0].imageUrl[0]),
+                      child: Image.network(widget.order.commodity[0].imageUrl[0]),
                     ),
                   ),
                   const SizedBox(width: 14.0,),
@@ -48,14 +54,14 @@ class OrderDetailCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          order.commodity[0].commodityName,
+                          widget.order.commodity[0].commodityName,
                           style: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                          order.commodity[0].specification[0].specification,
+                          widget.order.commodity[0].specification[0].specification,
                           style: const TextStyle(
                             fontSize: 14.0,
                           ),
@@ -68,19 +74,32 @@ class OrderDetailCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        '￥${order.commodity[0].price}',
+                        '￥${widget.order.commodity[0].price}',
                         style: const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        'x${order.quantity}',
+                        'x${widget.order.quantity[0]}',
                         style: const TextStyle(
                           fontSize: 14.0,
                         ),
                       ),
                     ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8.0,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ItemCalculateWidget(
+                    count: widget.order.quantity[0],
+                    onCountChanged: (int value) {
+                      widget.order.quantity[0] += value;
+                      setState(() {});
+                    },
                   ),
                 ],
               ),
@@ -92,7 +111,7 @@ class OrderDetailCard extends StatelessWidget {
                   const Text('商品总价'),
                   const Expanded(child: SizedBox.shrink()),
                   Text(
-                    '￥${order.commodity[0].price * order.quantity[0]}',
+                    '￥${widget.order.commodity[0].price * widget.order.quantity[0]}',
                     style: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
@@ -108,7 +127,7 @@ class OrderDetailCard extends StatelessWidget {
                   const Text('运费'),
                   const Expanded(child: SizedBox.shrink()),
                   Text(
-                    '￥${order.commodity[0].freight}',
+                    '￥${widget.order.commodity[0].freight}',
                     style: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
@@ -124,7 +143,7 @@ class OrderDetailCard extends StatelessWidget {
                   const Text('需付款'),
                   const Expanded(child: SizedBox.shrink()),
                   Text(
-                    '￥${order.totalPrice + order.commodity[0].freight}',
+                    '￥${widget.order.totalPrice + widget.order.commodity[0].freight}',
                     style: const TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
@@ -140,5 +159,4 @@ class OrderDetailCard extends StatelessWidget {
       ),
     );
   }
-
 }
