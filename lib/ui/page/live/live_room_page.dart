@@ -1,21 +1,17 @@
 import 'dart:math';
 
-// import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barrage/flutter_barrage.dart';
-// import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:live_video_commerce/entity/commodity.dart';
 
-// import 'package:live_video_commerce/entity/live_room.dart';
 import 'package:live_video_commerce/ui/widget/live_room_chat_area.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../entity/commodity_specification.dart';
 import '../../../utils/stroke_text_widget.dart';
 import '../../widget/show_commodities_list_sheet.dart';
-// import '../commodity/commodity_detail_page.dart';
 import 'live_full_screen_page.dart';
 
 class LiveRoomPage extends StatefulWidget {
@@ -34,7 +30,6 @@ class _LiveRoomPageState extends State<LiveRoomPage>
   List<Bullet> bullets = [];
   late List<Commodity> commodities;
   late Future<void> _initializeVideoPlayerFuture;
-  // late StateSetter _reloadSpeedDialState;
   bool _isVideoControlAreaShowing = false;
   late VideoPlayerController _videoPlayerController;
   final TextEditingController _barrageEditingController =
@@ -150,51 +145,6 @@ class _LiveRoomPageState extends State<LiveRoomPage>
       },
     );
   }
-
-  // Widget _videoArea() {
-  //   return Stack(children: <Widget>[
-  //     Positioned(
-  //         top: 0,
-  //         child: Column(
-  //           children: [
-  //             Container(
-  //               width: Get.width,
-  //               height: Get.width * Get.size.aspectRatio + 90,
-  //               color: Colors.blue,
-  //             ),
-  //             // const ChatArea()
-  //           ],
-  //         )),
-  //     Positioned(
-  //       top: 14,
-  //       width: Get.width,
-  //       height: Get.width * Get.size.aspectRatio + 92,
-  //       child: BarrageWall(
-  //           debug: false,
-  //           safeBottomHeight: 60,
-  //           bullets: bullets,
-  //           controller: _barrageWallController,
-  //           child: Container()),
-  //     ),
-  //     Positioned(
-  //       top: 0,
-  //       width: Get.width,
-  //       height: Get.width * Get.size.aspectRatio + 90,
-  //       child: GestureDetector(
-  //         onTap: () {
-  //           setState(() {
-  //             _isVideoControlAreaShowing = !_isVideoControlAreaShowing;
-  //           });
-  //         },
-  //         child: _isVideoControlAreaShowing
-  //             ? videoPlayerControlArea()
-  //             : Container(
-  //                 color: Colors.transparent,
-  //               ),
-  //       ),
-  //     )
-  //   ]);
-  // }
 
   Widget _bottomArea() {
     return Row(
@@ -350,104 +300,6 @@ class _LiveRoomPageState extends State<LiveRoomPage>
               ))),
     );
   }
-  //
-  // Widget _videoPlayerControlArea(){
-  //   return SpeedDial(
-  //     key: const ValueKey(0),
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.all(Radius.circular(16)),
-  //     ),
-  //     spacing: 16,
-  //     animationCurve: Curves.elasticInOut,
-  //     childMargin: EdgeInsets.zero,
-  //     childPadding: const EdgeInsets.all(8.0),
-  //     childrenButtonSize: const Size(64, 64),
-  //     animatedIcon: AnimatedIcons.menu_close,
-  //     closeManually: true,
-  //     children: [
-  //       _videoPlayerController.value.isPlaying
-  //           ? SpeedDialChild(
-  //           shape: const RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.all(Radius.circular(12)),
-  //           ),
-  //           child: Icon(
-  //             Icons.pause,
-  //             color: Get.theme.colorScheme.primary,
-  //           ),
-  //           // label: '暂停',
-  //           labelBackgroundColor: Get.theme.colorScheme.primary,
-  //           labelStyle: TextStyle(color: Get.theme.colorScheme.onPrimary),
-  //           onTap: () {
-  //             setState(() {
-  //               _videoPlayerController.pause();
-  //             });
-  //           })
-  //           : SpeedDialChild(
-  //           shape: const RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.all(Radius.circular(12)),
-  //           ),
-  //           child: Icon(
-  //             Icons.play_arrow,
-  //             color: Get.theme.colorScheme.primary,
-  //           ),
-  //           labelBackgroundColor: Get.theme.colorScheme.primary,
-  //           labelStyle: TextStyle(color: Get.theme.colorScheme.onPrimary),
-  //           onTap: () {
-  //             setState(() {
-  //               _videoPlayerController.play();
-  //             });
-  //           }),
-  //
-  //       _isBarrageShowing?
-  //
-  //       SpeedDialChild(
-  //           shape: const RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.all(Radius.circular(12)),
-  //           ),
-  //           child: SvgPicture.asset("assets/icon/barrage_off.svg",
-  //             width: 24, height: 24,
-  //             colorFilter: ColorFilter.mode(Get.theme.colorScheme.primary, BlendMode.srcIn),),
-  //           labelBackgroundColor: Get.theme.colorScheme.primary,
-  //           labelStyle: TextStyle(color: Get.theme.colorScheme.onPrimary),
-  //           onTap: () {
-  //             _bulletsStop();
-  //             _reloadSpeedDialState;
-  //           })
-  //           :
-  //       SpeedDialChild(
-  //           shape: const RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.all(Radius.circular(12)),
-  //           ),
-  //           child: SvgPicture.asset("assets/icon/barrage_on.svg",
-  //             width: 24, height: 24,
-  //             colorFilter: ColorFilter.mode(Get.theme.colorScheme.primary, BlendMode.srcIn),),
-  //           labelBackgroundColor: Get.theme.colorScheme.primary,
-  //           labelStyle: TextStyle(color: Get.theme.colorScheme.onPrimary),
-  //           onTap: () {
-  //             _bulletsStart();
-  //             _reloadSpeedDialState;
-  //           }),
-  //       SpeedDialChild(
-  //           shape: const RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.all(Radius.circular(12)),
-  //           ),
-  //           child: Icon(
-  //              Icons.star_border_rounded,
-  //             color: Get.theme.colorScheme.primary,
-  //           ),
-  //           labelBackgroundColor: Get.theme.colorScheme.primary,
-  //           labelStyle: TextStyle(color: Get.theme.colorScheme.onPrimary),
-  //           onTap: () async {
-  //             if (mounted) {
-  //               setState(() {
-  //                 // _isFavor = !_isFavor;
-  //               });
-  //             }
-  //
-  //           })
-  //     ],
-  //   );
-  // }
 
   Future<void> _fetchData() async {
     _bulletsStart();
