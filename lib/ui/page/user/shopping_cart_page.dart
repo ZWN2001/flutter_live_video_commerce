@@ -39,7 +39,10 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
           Expanded(child: ListView.builder(
             itemCount: anchorCommodityData.length,
             itemBuilder: (BuildContext context, int index) {
-              return _cartItemCard(anchorCommodityData.keys.toList()[index], anchorCommodityData.values.toList()[index]);
+              if(anchorCommodityData.values.toList()[index].isNotEmpty){
+                return _cartItemCard(anchorCommodityData.keys.toList()[index], anchorCommodityData.values.toList()[index]);
+              }
+              return Container();
             },
           )),
           Container(
@@ -127,16 +130,6 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
                     });
                   }
               ),
-              // Checkbox(
-              //     value: anchorCommoditySelectedAll[anchorName],
-              //     onChanged: (v){
-              //   anchorCommoditySelectedAll[anchorName] = v!;
-              //   setState(() {
-              //     commoditySelected[anchorName] = List.filled(list.length, v);
-              //     _countTotalPrice();
-              //     _countTotalCount();
-              //   });
-              // }),
               const SizedBox(width: 16,),
               Text(anchorName),
             ],
@@ -151,20 +144,18 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
                   motion: const DrawerMotion(),
                   children: [
                     SlidableAction(
-                      flex: 2,
-                      onPressed: (c){//TODO
-                         },
-                      backgroundColor: const Color(0xFF7BC043),
+                      onPressed: (c){
+                        //删除
+                        anchorCommodityData[anchorName]!.removeAt(index);
+                        _countTotalPrice();
+                        _countTotalCount();
+                        _onListChanged();
+                        setState(() {});
+                      },
+                      backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
-                      icon: Icons.archive,
-                      label: 'Archive',
-                    ),
-                    SlidableAction(
-                      onPressed: (c){},
-                      backgroundColor: const Color(0xFF0392CF),
-                      foregroundColor: Colors.white,
-                      icon: Icons.save,
-                      label: 'Save',
+                      icon: Icons.delete_outline,
+                      label: '删除',
                     ),
                   ],
                 ),
@@ -282,8 +273,15 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
 
     for (var element in anchorCommodityData.keys) {
       anchorCommoditySelectedAll[element] = false;
-      commoditySelected[element] = List.filled(anchorCommodityData[element]?.length??0, false);
-      commodityCount[element] = List.filled(anchorCommodityData[element]?.length??0, 1);
+      if(commoditySelected[element] == null){
+        commoditySelected[element] = List.empty(growable: true);
+      }
+      commoditySelected[element]?.addAll(List.filled(anchorCommodityData[element]?.length??0, false));
+
+      if(commodityCount[element] == null){
+        commodityCount[element] = List.empty(growable: true);
+      }
+      commodityCount[element]?.addAll(List.filled(anchorCommodityData[element]?.length??0, 0));
     }
 
     _countTotalPrice();
@@ -312,6 +310,24 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
         }
       }
     });
+  }
+
+  void _onListChanged(){
+    List<String> keysToRemove = [];
+
+    anchorCommodityData.forEach((key, value) {
+      if (value.isEmpty) {
+        keysToRemove.add(key);
+      }
+    });
+
+    for (var key in keysToRemove) {
+      anchorCommodityData.remove(key);
+      commoditySelected.remove(key);
+      commodityCount.remove(key);
+      anchorCommoditySelectedAll.remove(key);
+    }
+
   }
 
 }
