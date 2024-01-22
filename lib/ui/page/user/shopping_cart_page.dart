@@ -116,16 +116,27 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
         children: [
           Row(
             children: [
-              Checkbox(
-                  value: anchorCommoditySelectedAll[anchorName],
+              Radio(value: true,
+                  groupValue: anchorCommoditySelectedAll[anchorName],
                   onChanged: (v){
-                anchorCommoditySelectedAll[anchorName] = v!;
-                setState(() {
-                  commoditySelected[anchorName] = List.filled(list.length, v);
-                  _countTotalPrice();
-                  _countTotalCount();
-                });
-              }),
+                    anchorCommoditySelectedAll[anchorName] = v!;
+                    setState(() {
+                      commoditySelected[anchorName] = List.filled(list.length, v);
+                      _countTotalPrice();
+                      _countTotalCount();
+                    });
+                  }
+              ),
+              // Checkbox(
+              //     value: anchorCommoditySelectedAll[anchorName],
+              //     onChanged: (v){
+              //   anchorCommoditySelectedAll[anchorName] = v!;
+              //   setState(() {
+              //     commoditySelected[anchorName] = List.filled(list.length, v);
+              //     _countTotalPrice();
+              //     _countTotalCount();
+              //   });
+              // }),
               const SizedBox(width: 16,),
               Text(anchorName),
             ],
@@ -178,6 +189,8 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
             commoditySelected[commodity.anchorName]?[index] = v!;
             _countTotalPrice();
             _countTotalCount();
+            //commoditySelected[commodity.anchorName]若全为true，则anchorCommoditySelectedAll[commodity.anchorName]为true
+            anchorCommoditySelectedAll[commodity.anchorName] = commoditySelected[commodity.anchorName]!.every((element) => element);
             setState(() {});
           }
           ),
