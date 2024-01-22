@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:get/get.dart';
+import 'package:live_video_commerce/ui/page/user/shopping_cart_page.dart';
 
 import '../../../entity/commodity.dart';
 import '../../../entity/order.dart';
@@ -123,7 +124,7 @@ class CommodityDetailPageState extends State<CommodityDetailPage> {
                 ],
               ),
               onTap: () {
-                //TODO: go to cart
+                Get.to(()=>const ShoppingCartPage());
               },
             ),
             const Expanded(child: SizedBox.shrink(),),
@@ -163,19 +164,25 @@ class CommodityDetailPageState extends State<CommodityDetailPage> {
                         ),))
                 ),),
               onTap: (){
-                Order order = Order(
-                  oid: "1",
-                  commodity: [widget.commodity],
-                  receivingInfo: null,
-                  status: 0,
-                  createdAt: "2022-01-01 10:00:00",
-                  payAt: "2022-01-01 10:00:00",
-                  shipAt: "",
-                  completeAt: "",
-                  totalPrice: 104.99,
-                  quantity: [1],
-                );
-                Get.to(()=>OrderConfirmPage(order: order,));
+                // Order order = Order(
+                //   oid: "1",
+                //   commodity: [widget.commodity],
+                //   receivingInfo: null,
+                //   status: 0,
+                //   createdAt: "2022-01-01 10:00:00",
+                //   payAt: "2022-01-01 10:00:00",
+                //   shipAt: "",
+                //   completeAt: "",
+                //   totalPrice: 104.99,
+                //   quantity: [1],
+                // );
+                Map<String,List<Commodity>> anchorCommodityData = {
+                  widget.commodity.anchorName: [widget.commodity],
+                };
+                Map<String,List<int>> commodityCount = {
+                  widget.commodity.anchorName: [1],
+                };
+                Get.to(()=>OrderConfirmPage(anchorCommodityData: anchorCommodityData,commodityCount: commodityCount,));
               },
             ),
             const SizedBox(width: 12,),

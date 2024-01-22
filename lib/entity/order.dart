@@ -9,11 +9,11 @@ class Order{
   //订单创建时间
   String createdAt;
   //订单支付时间
-  String payAt;
+  String? payAt;
   //订单发货时间
-  String shipAt;
+  String? shipAt;
   //订单完成时间
-  String completeAt;
+  String? completeAt;
   //订单总价
   double totalPrice;
   //商品数量
@@ -22,12 +22,12 @@ class Order{
   Order({
     required this.oid,
     required this.commodity,
-    required this.receivingInfo,
+    this.receivingInfo,
     required this.status,
     required this.createdAt,
-    required this.payAt,
-    required this.shipAt,
-    required this.completeAt,
+    this.payAt,
+    this.shipAt,
+    this.completeAt,
     required this.totalPrice,
     required this.quantity,
   });

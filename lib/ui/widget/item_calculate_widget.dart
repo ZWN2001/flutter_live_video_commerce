@@ -51,8 +51,8 @@ class _ItemCalculateWidgetState extends State<ItemCalculateWidget> {
         if (count > 1) {
           count --;
           setState(() {});
+          widget.onCountChanged(-1);
         }
-        widget.onCountChanged(-1);
       },
       child: Container(
         width: widget.size ?? 32,

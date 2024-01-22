@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
 
 import '../../../entity/commodity.dart';
 import '../../../entity/commodity_specification.dart';
 import '../../widget/item_calculate_widget.dart';
+import '../commodity/order_confirm_page.dart';
 
 class ShoppingCartPage extends StatefulWidget {
   const ShoppingCartPage({super.key});
@@ -13,6 +15,7 @@ class ShoppingCartPage extends StatefulWidget {
 }
 
 class ShoppingCartPageState extends State<ShoppingCartPage>{
+  ///还是觉得这段代码可读性不太好，抽象成一个类，然后把数据和方法都放在类里面，可能看起来会更清晰
   List<Commodity> commodityList = [];///不要使用该数据作为UI数据源
   Map<String,List<Commodity>> anchorCommodityData = {};
   Map<String,bool> anchorCommoditySelectedAll = {};
@@ -101,7 +104,27 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Map<String,List<Commodity>> selectedAnchorCommodity = {};
+                    Map<String,List<int>> selectedCommodityCount = {};
+                    anchorCommodityData.forEach((key, value) {
+                      List<Commodity> selectedCommodity = [];
+                      List<int> selectedCount = [];
+                      for(int i=0;i<value.length;i++){
+                        if(commoditySelected[key]?[i]??false){
+                          selectedCommodity.add(value[i]);
+                          selectedCount.add(commodityCount[key]?[i]??0);
+                        }
+                      }
+                      if(selectedCommodity.isNotEmpty){
+                        selectedAnchorCommodity[key] = selectedCommodity;
+                        selectedCommodityCount[key] = selectedCount;
+                      }
+                    });
+                    Get.to(()=>OrderConfirmPage(
+                      anchorCommodityData: selectedAnchorCommodity,
+                      commodityCount: selectedCommodityCount,));
+                  },
                   child: const Text('结算',style: TextStyle(color: Colors.white),),
                 ),
                 const SizedBox(width: 12,),
@@ -281,7 +304,7 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
       if(commodityCount[element] == null){
         commodityCount[element] = List.empty(growable: true);
       }
-      commodityCount[element]?.addAll(List.filled(anchorCommodityData[element]?.length??0, 0));
+      commodityCount[element]?.addAll(List.filled(anchorCommodityData[element]?.length??0, 1));
     }
 
     _countTotalPrice();
