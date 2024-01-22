@@ -13,10 +13,13 @@ class ShoppingCartPage extends StatefulWidget {
 }
 
 class ShoppingCartPageState extends State<ShoppingCartPage>{
-  List<Commodity> commodityList = [];
-  Map<String,List<Commodity>> anchorCommodityMap = {};
-  List<bool> commoditySelected = [];
-  List<int> commodityCount = [];
+  List<Commodity> commodityList = [];///不要使用该数据作为UI数据源
+  Map<String,List<Commodity>> anchorCommodityData = {};
+  Map<String,bool> anchorCommoditySelectedAll = {};
+  Map<String,List<bool>> commoditySelected = {};
+  Map<String,List<int>> commodityCount = {};
+  double totalPrice = 0;
+  int totalCount = 0;
 
   @override
   void initState() {
@@ -31,32 +34,81 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
       appBar: AppBar(
         title: const Text('购物车'),
       ),
-      body: ListView.builder(
-        itemCount: anchorCommodityMap.length,
-        itemBuilder: (BuildContext context, int index) {
-          return _cartItemCard(anchorCommodityMap.keys.toList()[index], anchorCommodityMap.values.toList()[index]);
-        },
+      body: Column(
+        children: [
+          Expanded(child: ListView.builder(
+            itemCount: anchorCommodityData.length,
+            itemBuilder: (BuildContext context, int index) {
+              return _cartItemCard(anchorCommodityData.keys.toList()[index], anchorCommodityData.values.toList()[index]);
+            },
+          )),
+          Container(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  '共$totalCount件商品',
+                  style: const TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(width: 4,),
+                const Text('合计:',),
+                const Text(
+                  '￥',
+                  style: TextStyle(
+                    color: Colors.orange,
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  totalPrice.toStringAsFixed(2),
+                  style: const TextStyle(
+                    color: Colors.orange,
+                    fontSize: 22,
+                  ),
+                ),
+                const SizedBox(width: 12,),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                  ),
+                  onPressed: () {},
+                  child: const Text('确认订单',style: TextStyle(color: Colors.white),),
+                ),
+                const SizedBox(width: 12,),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _cartItemCard(String anchorName, List<Commodity> commodityList) {
+  Widget _cartItemCard(String anchorName, List<Commodity> list) {
     return Card(
       child: Column(
         children: [
           Row(
             children: [
-              Radio(
-                value: true,
-                onChanged: (value) {}, groupValue: true,
-              ),
+              Checkbox(
+                  value: anchorCommoditySelectedAll[anchorName],
+                  onChanged: (v){
+                anchorCommoditySelectedAll[anchorName] = v!;
+                setState(() {
+                  commoditySelected[anchorName] = List.filled(list.length, v);
+                  _countTotalPrice();
+                  _countTotalCount();
+                });
+              }),
               const SizedBox(width: 16,),
               Text(anchorName),
             ],
           ),
           ListView.builder(
             shrinkWrap: true,
-            itemCount: commodityList.length,
+            itemCount: list.length,
             itemBuilder: (BuildContext context, int index) {
               return Slidable(
                 key: const ValueKey(0),
@@ -80,7 +132,7 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
                     ),
                   ],
                 ),
-                child: _commodityItem(commodityList[index],index),
+                child: _commodityItem(list[index],index),
               );
             },
           ),
@@ -95,13 +147,14 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Radio(
-            value: true,
-            onChanged: (value) {
-              commoditySelected[index] = value!;
-              //TODO:选择商品
-            },
-            groupValue: commoditySelected[index],
+          Checkbox(
+              value: commoditySelected[commodity.anchorName]?[index],
+              onChanged: (v){
+            commoditySelected[commodity.anchorName]?[index] = v!;
+            _countTotalPrice();
+            _countTotalCount();
+            setState(() {});
+          }
           ),
           const SizedBox(width: 16,),
           ClipRRect(
@@ -137,11 +190,13 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
               ),
               const SizedBox(height: 6,),
               ItemCalculateWidget(
-                count: commodityCount[index],
+                count: commodityCount[commodity.anchorName]![index],
                 mainAxisAlignment: MainAxisAlignment.end,
                 size: 26,
                 onCountChanged: (int value) {
-                  commodityCount[index] += value;
+                  commodityCount[commodity.anchorName]![index] += value;
+                  _countTotalPrice();
+                  _countTotalCount();
                   setState(() {});
                 },
               ),
@@ -183,14 +238,44 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
     );
     commodityList.add(commodity);
     for (var element in commodityList) {
-      if(anchorCommodityMap[element.anchorName] == null){
-        anchorCommodityMap[element.anchorName] = [];
+      if(anchorCommodityData[element.anchorName] == null){
+        anchorCommodityData[element.anchorName] = [];
       }
-      anchorCommodityMap[element.anchorName]?.add(element);
-      //commoditySelected置为未选择
-      commoditySelected.add(false);
-      commodityCount.add(1);
+      anchorCommodityData[element.anchorName]?.add(element);
     }
+
+    for (var element in anchorCommodityData.keys) {
+      anchorCommoditySelectedAll[element] = false;
+      commoditySelected[element] = List.filled(anchorCommodityData[element]?.length??0, false);
+      commodityCount[element] = List.filled(anchorCommodityData[element]?.length??0, 1);
+    }
+
+    _countTotalPrice();
+    _countTotalCount();
+  }
+
+  void _countTotalPrice(){
+    totalPrice = 0;
+    commoditySelected.forEach((key, value) {
+      for (int i = 0; i < value.length; i++) {
+        if(value[i]){
+          double price = anchorCommodityData[key]?[i].price??0;
+          int count = commodityCount[key]?[i]??0;
+          totalPrice += price * count;
+        }
+      }
+    });
+  }
+
+  void _countTotalCount(){
+    totalCount = 0;
+    commoditySelected.forEach((key, value) {
+      for (int i = 0; i < value.length; i++) {
+        if(value[i]){
+          totalCount += commodityCount[key]?[i]??0;
+        }
+      }
+    });
   }
 
 }
