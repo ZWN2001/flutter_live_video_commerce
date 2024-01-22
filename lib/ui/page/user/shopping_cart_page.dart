@@ -47,8 +47,32 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                //全选
+                Checkbox(
+                    value: anchorCommoditySelectedAll.values.every((element) => element),
+                    onChanged: (v){
+                  anchorCommoditySelectedAll.forEach((key, value) {
+                    anchorCommoditySelectedAll[key] = v!;
+                  });
+                  setState(() {
+                    commoditySelected.forEach((key, value) {
+                      commoditySelected[key] = List.filled(value.length, v!);
+                    });
+                    _countTotalPrice();
+                    _countTotalCount();
+                  });
+                }),
+                if(totalPrice<10000000)
+                const Text(
+                  '全选',
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+                Expanded(child: Container(),),
+                if(totalPrice<10000000)
                 Text(
-                  '共$totalCount件商品',
+                  '共$totalCount件',
                   style: const TextStyle(
                     color: Colors.grey,
                   ),
@@ -75,7 +99,7 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
                     backgroundColor: Colors.orange,
                   ),
                   onPressed: () {},
-                  child: const Text('确认订单',style: TextStyle(color: Colors.white),),
+                  child: const Text('结算',style: TextStyle(color: Colors.white),),
                 ),
                 const SizedBox(width: 12,),
               ],
@@ -117,7 +141,8 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
                   children: [
                     SlidableAction(
                       flex: 2,
-                      onPressed: (c){},
+                      onPressed: (c){//TODO
+                         },
                       backgroundColor: const Color(0xFF7BC043),
                       foregroundColor: Colors.white,
                       icon: Icons.archive,
@@ -168,27 +193,25 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
           const SizedBox(width: 16,),
           Expanded(child:
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    children: [
-                      Text(commodity.commodityName,
-                        style: const TextStyle(fontSize: 16),),
-                      Text(
-                        commodity.specification[0].specification,
-                        maxLines: 5,
-                        style: const TextStyle(color: Colors.grey,
-                            overflow: TextOverflow.ellipsis),),
-                    ],
-                  ),
+                  Text(commodity.commodityName,
+                    style: const TextStyle(fontSize: 16),),
+                  Text(
+                    commodity.specification[0].specification,
+                    maxLines: 5,
+                    style: const TextStyle(color: Colors.grey,
+                        overflow: TextOverflow.ellipsis),),
+                  const SizedBox(height: 6,),
                   Text('￥${commodity.price}',
                     style: const TextStyle(fontSize: 20, color: Colors.blue),),
+                  const SizedBox(height: 6,),
                 ],
               ),
-              const SizedBox(height: 6,),
+
               ItemCalculateWidget(
                 count: commodityCount[commodity.anchorName]![index],
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -231,7 +254,7 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
       commodityName: "Test Commodity2",
       anchorId: "123",
       anchorName: "Test Anchor2",
-      price: 99.99,
+      price: 999000,
       freight: 5.0,
       specification: [commoditySpecification],
       imageUrl: ["https://www.zwn2001.space/img/favicon.webp"],
