@@ -313,6 +313,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
       id: "1",
       imageUrl: "https://www.zwn2001.space/img/favicon.webp",
       specification: "Sample Specification",
+      price: 9.99,
     );
 
     Commodity testCommodity = Commodity(

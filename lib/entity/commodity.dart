@@ -9,7 +9,7 @@ class Commodity{
   String anchorId;
   //主播名称
   String anchorName;
-  //商品单价
+  //商品最低单价
   double price;
   //运费
   double freight;
@@ -30,14 +30,23 @@ class Commodity{
   });
 
   factory Commodity.fromJson(Map<String, dynamic> json) {
+    List<CommoditySpecification> specification = (json['specification'] as List<dynamic>).map((e) => CommoditySpecification.fromJson(e)).toList();
+    //price为specification的最小值
+    double price = specification[0].price;
+    for (var element in specification) {
+      if(element.price < price){
+        price = element.price;
+      }
+    }
+
     return Commodity(
       cid: json['id'] as String,
       commodityName: json['name'] as String,
       anchorId: json['anchorId'] as String,
       anchorName: json['anchorName'] as String,
-      price: json['price'] as double,
+      price: price,
       freight: json['freight'] as double,
-      specification: (json['specification'] as List<dynamic>).map((e) => CommoditySpecification.fromJson(e)).toList(),
+      specification: specification,
       imageUrl: json['image'] as List<String>,
     );
   }

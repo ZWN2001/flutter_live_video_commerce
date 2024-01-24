@@ -25,6 +25,7 @@ class _ShoppingHistoryPageState extends State<ShoppingHistoryPage> {
       id: "1",
       imageUrl: "https://www.zwn2001.space/img/favicon.webp",
       specification: "Sample Specification",
+      price: 20
     );
 
     Commodity commodity = Commodity(
