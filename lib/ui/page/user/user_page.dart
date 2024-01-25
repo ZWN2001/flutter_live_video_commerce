@@ -3,6 +3,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:live_video_commerce/entity/commodity_specification.dart';
 import 'package:live_video_commerce/ui/page/login_page.dart';
+import 'package:live_video_commerce/ui/page/user/my_receiving_info_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_cart_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_history_page.dart';
 
@@ -241,7 +242,7 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
           }),
           const Divider(height: 0,),
           _settingsRow(Icons.location_on_outlined, '我的收货地址', () {
-
+            Get.to(()=>const MyReceivingInfoPage());
           }),
         ],
       ),

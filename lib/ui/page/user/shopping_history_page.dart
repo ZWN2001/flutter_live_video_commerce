@@ -40,6 +40,7 @@ class _ShoppingHistoryPageState extends State<ShoppingHistoryPage> {
     );
 
     ReceivingInfo receivingInfo = ReceivingInfo(
+      id: "1",
       name: "John Doe",
       phone: "1234567890",
       address: "123 Main St, City, State",

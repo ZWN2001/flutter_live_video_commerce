@@ -26,6 +26,9 @@ class CommodityDetailPageState extends State<CommodityDetailPage> {
   void initState() {
     super.initState();
     _commodity = widget.commodity;
+    if(_commodity.specification.length == 1){
+      _selectIndex = 0;
+    }
   }
   @override
   Widget build(BuildContext context) {

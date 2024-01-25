@@ -22,6 +22,7 @@ class OrderConfirmPage extends StatefulWidget {
 
 class OrderConfirmPageState extends State<OrderConfirmPage> {
   ReceivingInfo receivingInfo = ReceivingInfo(
+    id: '0',
     name: '张三',
     phone: '12345678901',
     address: '山东省 济南市 历城区 港沟街道 舜华路1500号山东大学软件园校区教学楼',
