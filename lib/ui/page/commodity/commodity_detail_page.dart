@@ -220,7 +220,7 @@ class CommodityDetailPageState extends State<CommodityDetailPage> {
                 ),
                 onTap: () {
                   if (_selectIndex != null) {
-                    Commodity commodity = widget.commodity;
+                    Commodity commodity = widget.commodity.clone();
                     commodity.specification = [
                       commodity.specification[_selectIndex!]
                     ];

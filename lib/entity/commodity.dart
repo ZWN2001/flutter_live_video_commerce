@@ -64,4 +64,18 @@ class Commodity{
     };
   }
 
+  //深拷贝
+  Commodity clone() {
+    return Commodity(
+      cid: cid,
+      commodityName: commodityName,
+      anchorId: anchorId,
+      anchorName: anchorName,
+      price: price,
+      freight: freight,
+      specification: specification.map((e) => e.clone()).toList(),
+      imageUrl: imageUrl,
+    );
+  }
+
 }

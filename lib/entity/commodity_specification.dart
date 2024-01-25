@@ -32,4 +32,15 @@ class CommoditySpecification{
       'price': price,
     };
   }
+
+  //深拷贝
+  CommoditySpecification clone() {
+    return CommoditySpecification(
+      cid: cid,
+      id: id,
+      imageUrl: imageUrl,
+      specification: specification,
+      price: price,
+    );
+  }
 }
