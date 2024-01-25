@@ -42,7 +42,7 @@ class ReceivingInfoCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6.0,),
                   Text(
-                    receivingInfo.address,
+                    receivingInfo.detailedAddress,
                     maxLines: 4,
                     overflow: TextOverflow.ellipsis,
                   ),

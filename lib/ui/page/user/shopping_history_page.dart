@@ -43,7 +43,8 @@ class _ShoppingHistoryPageState extends State<ShoppingHistoryPage> {
       id: "1",
       name: "John Doe",
       phone: "1234567890",
-      address: "123 Main St, City, State",
+      locateArea: "City, State",
+      detailedAddress: "123 Main St, City, State",
     );
 
     Order order = Order(

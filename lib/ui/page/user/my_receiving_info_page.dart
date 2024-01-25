@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
+import 'package:live_video_commerce/ui/page/user/edit_receiving_info_page.dart';
 
 import '../../../entity/receiving_info.dart';
 
@@ -46,7 +48,7 @@ class MyReceivingInfoPageState extends State<MyReceivingInfoPage> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-
+                        Get.to(()=>const EditReceivingInfoPage(isDefaultReceivingInfo: false,));
                       },
                       child: const Text('+  新增收货信息'),
                     ),
@@ -80,7 +82,7 @@ class MyReceivingInfoPageState extends State<MyReceivingInfoPage> {
           SlidableAction(
             onPressed: (c){
               //删除
-
+              _receivingInfoList.remove(receivingInfo);
               setState(() {});
             },
             backgroundColor: Colors.red,
@@ -106,11 +108,11 @@ class MyReceivingInfoPageState extends State<MyReceivingInfoPage> {
               Container(decoration:BoxDecoration(border: Border.all(color: Colors.blue, width: 0.5)),child: const Text(' 默认 ',style: TextStyle(color: Colors.blue),),),
           ],
         ),
-        subtitle: Text(receivingInfo.address,maxLines: 4,overflow: TextOverflow.ellipsis,),
+        subtitle: Text(receivingInfo.detailedAddress,maxLines: 4,overflow: TextOverflow.ellipsis,),
         trailing: IconButton(
           icon: const Icon(Icons.edit),
           onPressed: () {
-
+            Get.to(()=>EditReceivingInfoPage(receivingInfo: receivingInfo,isDefaultReceivingInfo: _defaultReceivingInfoId == receivingInfo.id,));
           },
         ),
       )
@@ -122,7 +124,8 @@ class MyReceivingInfoPageState extends State<MyReceivingInfoPage> {
       id: '1',
       name: '张三',
       phone: '12345678901',
-      address: '山东省 济南市 历城区 港沟街道 舜华路1500号山东大学软件园校区教学楼',
+      locateArea: '山东省 济南市 历城区 港沟街道 ',
+      detailedAddress: '舜华路1500号山东大学软件园校区教学楼',
     );
     _receivingInfoList = [receivingInfo,receivingInfo,receivingInfo,receivingInfo];
   }

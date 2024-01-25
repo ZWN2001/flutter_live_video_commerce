@@ -2,13 +2,15 @@ class ReceivingInfo{
   String id;
   String name;
   String phone;
-  String address;
+  String locateArea;
+  String detailedAddress;
 
   ReceivingInfo({
     required this.id,
     required this.name,
     required this.phone,
-    required this.address,
+    required this.locateArea,
+    required this.detailedAddress,
   });
 
   factory ReceivingInfo.fromJson(Map<String, dynamic> json) {
@@ -16,7 +18,8 @@ class ReceivingInfo{
       id: json['id'] as String,
       name: json['name'] as String,
       phone: json['phone'] as String,
-      address: json['address'] as String,
+      locateArea: json['locateArea'] as String,
+      detailedAddress: json['address'] as String,
     );
   }
 
@@ -25,7 +28,8 @@ class ReceivingInfo{
       'id': id,
       'name': name,
       'phone': phone,
-      'address': address,
+      'locateArea': locateArea,
+      'address': detailedAddress,
     };
   }
 }

@@ -25,7 +25,8 @@ class OrderConfirmPageState extends State<OrderConfirmPage> {
     id: '0',
     name: '张三',
     phone: '12345678901',
-    address: '山东省 济南市 历城区 港沟街道 舜华路1500号山东大学软件园校区教学楼',
+    locateArea: '山东省 济南市 历城区 港沟街道 ',
+    detailedAddress: '舜华路1500号山东大学软件园校区教学楼',
   );
   List<Order> orderList = [];
   int totalCount = 0;
