@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:live_video_commerce/ui/page/live/live_section_page.dart';
 import 'package:live_video_commerce/ui/page/user/user_page.dart';
 
+import '../../api/api.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -15,6 +17,12 @@ class _HomePageState extends State<HomePage> {
     LiveSectionPage(),
     UserPage()
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    UserAPI.autoLogin();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -52,7 +52,7 @@ class UserAPI{
   }
 
   static Future<ResultEntity<void>> logout() async {
-    UserStatus.changeState(user: null);
+    UserStatus.changeState(user: null,token: '');
     await Store.removeKeys(['user', 'token']);
     return ResultEntity.succeed();
   }
