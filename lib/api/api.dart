@@ -35,10 +35,19 @@ class UserAPI{
   }
 
   static Future<ResultEntity<void>> login(
-      {required String username, required String password}) async {
+      {required String uid, required String password}) async {
     Response response = await HttpUtils.post(_login,
         data:
-        FormData.fromMap({'u': username, 'p': password,}));
+        FormData.fromMap({'uid': uid, 'loginKey': password,}));
+    if (response.valid) {
+      String token = response.data['data']['token'];
+      String refreshToken = response.data['data']['refreshToken'];
+      User user = User.fromJson(response.data['data']['user']);
+      UserStatus.changeState(
+          user: user, token: token, refreshToken: refreshToken);
+      _storeUserInfo(user: user);
+      return ResultEntity.succeed();
+    }
     return ResultEntity.error();
   }
 
