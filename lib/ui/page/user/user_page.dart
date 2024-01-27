@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:live_video_commerce/entity/commodity_specification.dart';
 import 'package:live_video_commerce/ui/page/login_page.dart';
 import 'package:live_video_commerce/ui/page/user/my_receiving_info_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_cart_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_history_page.dart';
 
-import '../../../entity/commodity.dart';
 import '../../../entity/order.dart';
-import '../../../entity/receiving_info.dart';
 import '../../../entity/user.dart';
-import '../../../utils/constant_string_utils.dart';
 
 class UserPage extends StatefulWidget{
   const UserPage({super.key});
@@ -50,7 +46,7 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
           title: Text(
-            _user.name, style: const TextStyle(color: Colors.black54),),
+            _user.nickname, style: const TextStyle(color: Colors.black54),),
           background: Container(
             decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -275,16 +271,16 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
   Future<void> _fetchData() async {
     //TODO
     _user = User(
-      name: "John Doe",
-      email: "johndoe@example.com",
+      nickname: "John Doe",
+      // email: "johndoe@example.com",
       password: "password123",
       phone: "1234567890",
-      address: "123 Main St, City, State",
+      // address: "123 Main St, City, State",
       avatar: "https://www.zwn2001.space/img/favicon.webp",
-      role: "user",
-      status: "active",
-      createdAt: "2022-01-01 10:00:00",
-      updatedAt: "2022-01-01 12:00:00",
+      // role: "user",
+      // status: "active",
+      // createdAt: "2022-01-01 10:00:00",
+      // updatedAt: "2022-01-01 12:00:00",
     );
 
   }

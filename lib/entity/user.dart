@@ -1,55 +1,55 @@
 class User {
-  String name;
-  String email;
+  String nickname;
+  // String email;
   String password;
   String phone;
-  String address;
+  // String address;
   String avatar;
-  String role;
-  String status;
-  String createdAt;
-  String updatedAt;
+  // String role;
+  // String status;
+  // String createdAt;
+  // String updatedAt;
 
   User({
-    required this.name,
-    required this.email,
+    required this.nickname,
+    // required this.email,
     required this.password,
     required this.phone,
-    required this.address,
+    // required this.address,
     required this.avatar,
-    required this.role,
-    required this.status,
-    required this.createdAt,
-    required this.updatedAt,
+    // required this.role,
+    // required this.status,
+    // required this.createdAt,
+    // required this.updatedAt,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      name: json['name'] as String,
-      email: json['email'] as String,
+      nickname: json['name'] as String,
+      // email: json['email'] as String,
       password: json['password'] as String,
       phone: json['phone'] as String,
-      address: json['address'] as String,
+      // address: json['address'] as String,
       avatar: json['avatar'] as String,
-      role: json['role'] as String,
-      status: json['status'] as String,
-      createdAt: json['createdAt'] as String,
-      updatedAt: json['updatedAt'] as String,
+      // role: json['role'] as String,
+      // status: json['status'] as String,
+      // createdAt: json['createdAt'] as String,
+      // updatedAt: json['updatedAt'] as String,
     );
   }
 
   Map<String, dynamic> toJson () {
     return {
-      'name': name,
-      'email': email,
+      'name': nickname,
+      // 'email': email,
       'password': password,
       'phone': phone,
-      'address': address,
+      // 'address': address,
       'avatar': avatar,
-      'role': role,
-      'status': status,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      // 'role': role,
+      // 'status': status,
+      // 'createdAt': createdAt,
+      // 'updatedAt': updatedAt,
     };
   }
 }
