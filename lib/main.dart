@@ -14,7 +14,7 @@ import 'api/server.dart';
 Future<void> main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    // HttpUtils.config(baseUrl: Server.baseUrl);
+    HttpUtils.config(baseUrl: Server.baseUrl);
     await Store.initialize();
     runApp(const MyApp());
   }, (Object error, StackTrace stackTrace) {

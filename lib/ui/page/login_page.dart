@@ -1,7 +1,9 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../api/api.dart';
 import '../../entity/result.dart';
 import '../../route/route.dart';
 import '../../utils/constant_string_utils.dart';
@@ -31,14 +33,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<String?> _signupUser(SignupData data) async {
-    // ResultEntity result = await UserAPI.register(
-    //   username: data.name ?? '',
-    //   password: data.password ?? '',
-    // );
-    // if (result.success) {
+    ResultEntity result = await UserAPI.register(
+      uid: data.name ?? '',
+      password: data.password ?? '',
+    );
+    if (result.success) {
+      BotToast.showText(text: '注册成功');
       return null;
-    // }
-    // return result.message;
+    }
+    return result.message;
   }
 
   @override

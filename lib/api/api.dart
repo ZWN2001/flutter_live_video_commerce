@@ -11,9 +11,9 @@ import '../utils/http_utils.dart';
 import '../utils/store_utils.dart';
 
 class UserAPI{
-  static const String _login = '${Server.auth}/login';
-  static const String _register = '${Server.auth}/register';
-  static const String _refreshToken = '${Server.auth}/refresh';
+  static const String _login = '${Server.user}/login';
+  static const String _register = '${Server.user}/register';
+  static const String _refreshToken = '${Server.user}/refresh';
 
   static const String _userInfo = '${Server.user}/info';
 
@@ -49,13 +49,17 @@ class UserAPI{
   }
 
   static Future<ResultEntity<void>> register(
-      {required String username, required String password}) async {
+      {required String uid, required String password}) async {
     Response response = await HttpUtils.post(_register,
         data: FormData.fromMap({
-          'u': username,
-          'p': password,
+          'uid': uid,
+          'password': password,
+          'isCommon': true,
         }));
-    return ResultEntity.error();
+    if(response.valid){
+      return ResultEntity.succeed();
+    }
+    return ResultEntity.error(message: response.data['message']);
   }
 
   static Future<ResultEntity<void>> updateUserProfile({

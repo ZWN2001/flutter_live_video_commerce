@@ -1,12 +1,11 @@
 import 'package:dio/dio.dart';
 
 class Server {
-  static const String host = "---";
-  static const String baseUrl = '$host/live';
-  static const String wsServer = 'wss://---/wss/';
+  static const String host = "http://192.168.43.238:8081";
+  static const String baseUrl = host;
+  // static const String wsServer = 'wss://---/wss/';
 
-  static const String auth = "/auth";
-  static const String user = "/auth/user";
+  static const String user = "/users";
   static const String live = "/live";
   static const String commerce = "/commerce";
 
@@ -15,6 +14,6 @@ class Server {
 
 extension ResponseExtension on Response {
   bool get valid {
-    return data != null && data['code'] == 0;
+    return data != null && data['code'] == 200;
   }
 }
