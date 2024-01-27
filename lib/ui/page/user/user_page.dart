@@ -6,6 +6,7 @@ import 'package:live_video_commerce/ui/page/user/my_receiving_info_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_cart_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_history_page.dart';
 
+import '../../../api/api.dart';
 import '../../../entity/order.dart';
 import '../../../entity/user.dart';
 
@@ -102,8 +103,9 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
                           ),
                         ),
                         child: const Text("编辑资料"),
-                        onPressed: () {
-                          //TODO
+                        onPressed: () async {
+                          User? u = await UserAPI.getUserInfo();
+                          print(u.toString());
                         },
                       ),
                       const SizedBox(height: 16,),
@@ -269,20 +271,12 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
 
 
   Future<void> _fetchData() async {
-    //TODO
     _user = User(
+      uid: "1234567890",
       nickname: "John Doe",
-      // email: "johndoe@example.com",
       password: "password123",
-      phone: "1234567890",
-      // address: "123 Main St, City, State",
       avatar: "https://www.zwn2001.space/img/favicon.webp",
-      // role: "user",
-      // status: "active",
-      // createdAt: "2022-01-01 10:00:00",
-      // updatedAt: "2022-01-01 12:00:00",
     );
-
   }
 
 }

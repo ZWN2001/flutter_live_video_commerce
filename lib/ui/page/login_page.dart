@@ -23,13 +23,13 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<String?> _authUser(LoginData data) async {
-    // var result =
-    // await UserAPI.login(username: data.name, password: data.password);
-    // if (result.success) {
+    var result =
+    await UserAPI.login(uid: data.name, password: data.password);
+    if (result.success) {
       return null;
-    // } else {
-    //   return result.message;
-    // }
+    } else {
+      return result.message;
+    }
   }
 
   Future<String?> _signupUser(SignupData data) async {

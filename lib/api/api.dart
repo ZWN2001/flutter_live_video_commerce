@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:live_video_commerce/api/server.dart';
 import 'package:dio/dio.dart';
 
@@ -29,7 +30,7 @@ class UserAPI{
       return false;
     } else {
       User user = User.fromJson(jsonDecode(userJson));
-      UserStatus.changeState(user: user, token: token);
+      UserStatus.changeState(user: user, token: "Bearer:$token");
       return true;
     }
   }
@@ -41,10 +42,9 @@ class UserAPI{
         FormData.fromMap({'uid': uid, 'loginKey': password,}));
     if (response.valid) {
       String token = response.data['data']['token'];
-      String refreshToken = response.data['data']['refreshToken'];
-      User user = User.fromJson(response.data['data']['user']);
+      User user = User.fromJson(jsonDecode(response.data['data']['user']));
       UserStatus.changeState(
-          user: user, token: token, refreshToken: refreshToken);
+          user: user, token: "Bearer:$token");
       _storeUserInfo(user: user);
       return ResultEntity.succeed();
     }
@@ -53,7 +53,7 @@ class UserAPI{
 
   static Future<ResultEntity<void>> logout() async {
     UserStatus.changeState(user: null);
-    await Store.removeKeys(['user', 'token', 'refreshToken', 'deviceKey']);
+    await Store.removeKeys(['user', 'token']);
     return ResultEntity.succeed();
   }
 
@@ -71,46 +71,55 @@ class UserAPI{
     return ResultEntity.error(message: response.data['message']);
   }
 
+  static Future<User?> getUserInfo() async {
+    try {
+      Response response = await HttpUtils.get(_userInfo,
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid) {
+        return null;
+      }
+      var data = response.data['data'];
+      return User.fromJson(jsonDecode(data));
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
+
   static Future<ResultEntity<void>> updateUserProfile({
     String? nickname,
     String? avatar,
-    String? motto,
+    bool? gender,
   }) async {
     return ResultEntity.error();
   }
 
-  static Future<ResultEntity<void>> refreshUserStatus() async {
-    var res = await refreshToken();
-    if (res.code == SC.refreshTokenWrong) {
-      return res;
-    } else {
-      String token = res.data!;
-      User? user = await _userInfoWithCertainToken(token);
-      if (user == UserStatus.user) {
-        UserStatus.changeState(token: token, user: user, doCallback: false);
-      } else {
-        UserStatus.changeState(token: token, user: user);
-      }
-      _storeUserInfo(user: user);
-      return ResultEntity.succeed();
-    }
-  }
+  // static Future<ResultEntity<void>> refreshUserStatus() async {
+  //   var res = await refreshToken();
+  //   if (res.code == SC.refreshTokenWrong) {
+  //     return res;
+  //   } else {
+  //     String token = res.data!;
+  //     User? user = await _userInfoWithCertainToken(token);
+  //     if (user == UserStatus.user) {
+  //       UserStatus.changeState(token: token, user: user, doCallback: false);
+  //     } else {
+  //       UserStatus.changeState(token: token, user: user);
+  //     }
+  //     _storeUserInfo(user: user);
+  //     return ResultEntity.succeed();
+  //   }
+  // }
 
   static Future<ResultEntity<String>> refreshToken() async {
-    String refreshToken = Store.getString("refreshToken");
-    String deviceKey = Store.getString("deviceKey");
-    if (refreshToken.isEmpty) {
-      return ResultEntity.nop();
-    }
     try {
       Response response = await HttpUtils.post(_refreshToken,
           data: FormData.fromMap(
-              {'refresh_token': refreshToken, 'k': deviceKey}));
+              {'token': UserAPI.token}));
       if (response.valid) {
         await _storeUserInfo(
             token: response.data['data'][0],
-            refreshToken: response.data['data'][1],
-            deviceKey: deviceKey);
+            );
         return ResultEntity.succeed(data: response.data['data'][0]);
       } else {
         return ResultEntity.fromSC(SC.refreshTokenWrong);
@@ -121,32 +130,14 @@ class UserAPI{
   }
 
   static Future<void> _storeUserInfo(
-      {User? user,
+      { User? user,
         String? token,
-        String? refreshToken,
-        String? deviceKey}) async {
+      }) async {
     if (user != null) {
       await Store.set('user', jsonEncode(user));
     }
     if (token != null) {
       await Store.set('token', token);
-    }
-    if (refreshToken != null) {
-      await Store.set('refreshToken', refreshToken);
-    }
-    if (deviceKey != null) {
-      await Store.set('deviceKey', deviceKey);
-    }
-  }
-
-  static Future<User?> _userInfoWithCertainToken(String token) async {
-    try {
-      Response response = await HttpUtils.get(_userInfo,
-          options: Options(headers: {'Token': token}));
-      var data = response.data['data'];
-      return User.fromJson(data);
-    } catch (e) {
-      return null;
     }
   }
 }

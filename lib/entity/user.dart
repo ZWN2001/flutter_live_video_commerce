@@ -1,56 +1,37 @@
 class User {
+  String uid;
   String nickname;
-  // String email;
   String password;
-  String phone;
-  // String address;
   String avatar;
-  // String role;
-  // String status;
-  // String createdAt;
-  // String updatedAt;
 
   User({
+    required this.uid,
     required this.nickname,
-    // required this.email,
     required this.password,
-    required this.phone,
-    // required this.address,
     required this.avatar,
-    // required this.role,
-    // required this.status,
-    // required this.createdAt,
-    // required this.updatedAt,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      nickname: json['name'] as String,
-      // email: json['email'] as String,
-      password: json['password'] as String,
-      phone: json['phone'] as String,
-      // address: json['address'] as String,
-      avatar: json['avatar'] as String,
-      // role: json['role'] as String,
-      // status: json['status'] as String,
-      // createdAt: json['createdAt'] as String,
-      // updatedAt: json['updatedAt'] as String,
+      uid: json['uid'] as String,
+      nickname: json['name'] ?? '未设置用户名',
+      password: json['password'] ?? '',
+      avatar: json['avatar'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson () {
     return {
+      'uid': uid,
       'name': nickname,
-      // 'email': email,
       'password': password,
-      'phone': phone,
-      // 'address': address,
       'avatar': avatar,
-      // 'role': role,
-      // 'status': status,
-      // 'createdAt': createdAt,
-      // 'updatedAt': updatedAt,
     };
+  }
+
+  @override
+  String toString() {
+    return 'User{uid: $uid, nickname: $nickname, password: $password, avatar: $avatar}';
   }
 }
 
