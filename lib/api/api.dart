@@ -199,12 +199,12 @@ class LiveRoomAPI{
   }
 }
 
-class CommerceAPI{
-  static const String _commerce = '${Server.commerce}/liveRoomCommerce';
-  static const String _commerceDetail = '${Server.commerce}/commerceDetail';
-  static const String _shoppingHistory = '${Server.commerce}/history';
-  static const String _order = '${Server.commerce}/order';
-  static const String _orderDetail = '${Server.commerce}/orderDetail';
-  static const String _orderPay = '${Server.commerce}/orderPay';
-  static const String _orderCancel = '${Server.commerce}/orderCancel';
+class CommodityAPI{
+  static const String _commodity = '${Server.commodity}/liveRoomCommodity';
+  static const String _commodityDetail = '${Server.commodity}/commodityDetail';
+  static const String _shoppingHistory = '${Server.commodity}/history';
+  static const String _order = '${Server.commodity}/order';
+  static const String _orderDetail = '${Server.commodity}/orderDetail';
+  static const String _orderPay = '${Server.commodity}/orderPay';
+  static const String _orderCancel = '${Server.commodity}/orderCancel';
 }
