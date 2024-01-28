@@ -2,6 +2,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:live_video_commerce/entity/live_room.dart';
 
 import 'package:live_video_commerce/ui/page/live/player_controller.dart';
@@ -13,7 +14,7 @@ import '../../../entity/commodity_specification.dart';
 
 class LiveRoomController extends PlayerController with WidgetsBindingObserver{
 
-  late LiveRoom liveRoom;
+  late Rx<LiveRoom> liveRoom;
 
   late List<Commodity> commodities;
   late Future<void> initializeVideoPlayerFuture;
@@ -60,7 +61,7 @@ class LiveRoomController extends PlayerController with WidgetsBindingObserver{
 
     commodities=[testCommodity,testCommodity,testCommodity];
 
-    LiveRoom testLiveRoom = LiveRoom(
+    liveRoom = LiveRoom(
       rid: "123",
       uid: "456",
       sectionId: 1,
@@ -68,11 +69,11 @@ class LiveRoomController extends PlayerController with WidgetsBindingObserver{
       liveUrl: "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4",
       coverUrl: "https://www.zwn2001.space/img/favicon.webp",
       description: "测试直播间",
-      status: 1,
-    );
+      status: 0,
+    ).obs;
 
     player.open(
-      Media(testLiveRoom.liveUrl),
+      Media(liveRoom.value.liveUrl),
     );
 
   }

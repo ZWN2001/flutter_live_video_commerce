@@ -40,7 +40,7 @@ class LiveRoomPage extends GetView<LiveRoomController>  {
 
   Widget buildMediaPlayer() {
     var boxFit = BoxFit.contain;
-    double? aspectRatio;
+    double? aspectRatio = 16 / 9;
     return Stack(
       children: [
         Video(
@@ -57,7 +57,7 @@ class LiveRoomPage extends GetView<LiveRoomController>  {
         Obx(
               () =>
               Visibility(
-                visible: controller.liveRoom.status != 0,
+                visible: controller.liveRoom.value.status != 0,
                 child: const Center(
                   child: Text(
                     "未开播",
@@ -72,10 +72,13 @@ class LiveRoomPage extends GetView<LiveRoomController>  {
 
   Widget buildPageUI(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("直播")),
+        appBar: AppBar(title: Text(controller.liveRoom.value.roomName)),
         floatingActionButton: _commodityButtons(context),
         body: Column(children: <Widget>[
-          buildMediaPlayer(),
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: buildMediaPlayer(),
+          ),
           // SizedBox(
           //   width: Get.width,
           //   child: Stack(
@@ -293,7 +296,7 @@ class LiveRoomPage extends GetView<LiveRoomController>  {
                   // AppStyle.hGap12,
                   Expanded(
                     child: Text(
-                      controller.liveRoom.roomName,
+                      controller.liveRoom.value.roomName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(color: Colors.white, fontSize: 16),
@@ -554,7 +557,7 @@ class LiveRoomPage extends GetView<LiveRoomController>  {
                       controller.enterFullScreen();
                     },
                     icon: const Icon(
-                      Icons.fullscreen_exit,
+                      Icons.fullscreen,
                       color: Colors.white,
                     ),
                   ),
