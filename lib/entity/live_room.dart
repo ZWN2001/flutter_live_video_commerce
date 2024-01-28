@@ -1,37 +1,35 @@
 class LiveRoom {
   String rid;
+  String uid;
+  int sectionId;
   String roomName;
+  String liveUrl;
   String coverUrl;
   String description;
   int status;
-  int onlineCount;
-  String uid;
-  String anchorName;
-  String anchorAvatarUrl;
+
 
   LiveRoom({
     required this.rid,
+    required this.uid,
+    required this.sectionId,
     required this.roomName,
+    required this.liveUrl,
     required this.coverUrl,
     required this.description,
     required this.status,
-    required this.onlineCount,
-    required this.uid,
-    required this.anchorName,
-    required this.anchorAvatarUrl,
   });
 
   factory LiveRoom.fromJson(Map<String, dynamic> jsonMap) {
     return LiveRoom(
       rid: jsonMap['roomId'] as String,
+      uid: jsonMap['roomOwnerId'] as String,
+      sectionId: jsonMap['roomSectionId'] as int,
       roomName: jsonMap['roomName'] as String,
+      liveUrl: jsonMap['roomLiveUrl'] as String,
       coverUrl: jsonMap['roomCoverUrl'] as String,
       description: jsonMap['roomDescription'] as String,
       status: jsonMap['roomStatus'] as int,
-      onlineCount: jsonMap['roomOnlineCount'] as int,
-      uid: jsonMap['roomOwnerUid'] as String,
-      anchorName: jsonMap['roomOwnerName'] as String,
-      anchorAvatarUrl: jsonMap['roomOwnerAvatarUrl'] as String,
     );
   }
 }

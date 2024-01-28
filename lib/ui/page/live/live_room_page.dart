@@ -1,96 +1,120 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-// import 'package:flutter_barrage/flutter_barrage.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:live_video_commerce/entity/commodity.dart';
 
 import 'package:live_video_commerce/ui/widget/live_room_chat_area.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:ns_danmaku/danmaku_controller.dart';
+
 import 'package:ns_danmaku/danmaku_view.dart';
 import 'package:ns_danmaku/models/danmaku_item.dart';
 import 'package:ns_danmaku/models/danmaku_option.dart';
-import 'package:video_player/video_player.dart';
 
-import '../../../entity/commodity_specification.dart';
 import '../../widget/show_commodities_list_sheet.dart';
 import 'live_controller.dart';
 
-class LiveRoomPage extends StatefulWidget {
+class LiveRoomPage extends GetView<LiveRoomController>  {
   final String roomid;
 
   const LiveRoomPage({Key? key, required this.roomid}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _LiveRoomPageState();
-}
-
-class _LiveRoomPageState extends State<LiveRoomPage>
-    with TickerProviderStateMixin {
-  Random random = Random();
-  late List<Commodity> commodities;
-  late Future<void> _initializeVideoPlayerFuture;
-  bool showDanmakuState = false;
-  late VideoPlayerController _videoPlayerController;
-  final TextEditingController _barrageEditingController =
-      TextEditingController();
-  DanmakuController? danmakuController;
-  bool _isDanmakuShowing = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchData();
+  Widget build(BuildContext context) {
+    return Obx(
+          () {
+        if (controller.fullScreenState.value) {
+          return PopScope(
+            canPop: false,
+            onPopInvoked: (e) {
+              controller.exitFull();
+            },
+            child: Scaffold(
+              body: buildMediaPlayer(),
+            ),
+          );
+        } else {
+          return buildPageUI(context);
+        }
+      },
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget buildMediaPlayer() {
+    var boxFit = BoxFit.contain;
+    double? aspectRatio;
+    return Stack(
+      children: [
+        Video(
+          key: controller.globalPlayerKey,
+          controller: controller.videoController,
+          pauseUponEnteringBackgroundMode: false,
+          resumeUponEnteringForegroundMode: false,
+          controls: (state) {
+            return playerControls(state, controller);
+          },
+          aspectRatio: aspectRatio,
+          fit: boxFit,
+        ),
+        Obx(
+              () =>
+              Visibility(
+                visible: controller.liveRoom.status != 0,
+                child: const Center(
+                  child: Text(
+                    "未开播",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildPageUI(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("直播")),
-        floatingActionButton: _commodityButtons(),
+        floatingActionButton: _commodityButtons(context),
         body: Column(children: <Widget>[
-          SizedBox(
-            width: Get.width,
-            child: Stack(
-              children: [
-                _videoArea(),
-                Positioned(
-                    top: 14,
-                    width: Get.width,
-                    height: Get.width * Get.size.aspectRatio + 60,
-                    child: DanmakuView(
-                      key: UniqueKey(),
-                      createdController: (controller) {
-                        danmakuController = controller;
-                      },
-                      option: DanmakuOption(
-                        fontSize: 16,
-                      ),
-                    )
-                ),
-                Positioned(
-                  top: 0,
-                  width: Get.width,
-                  height: Get.width * Get.size.aspectRatio + 50,
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        showDanmakuState =
-                        !showDanmakuState;
-                      });
-                    },
-                    child: showDanmakuState
-                        ? _videoPlayerControlArea()
-                        : Container(
-                      color: Colors.transparent,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
+          buildMediaPlayer(),
+          // SizedBox(
+          //   width: Get.width,
+          //   child: Stack(
+          //     children: [
+          //       _videoArea(),
+          //       Positioned(
+          //           top: 14,
+          //           width: Get.width,
+          //           height: Get.width * Get.size.aspectRatio + 60,
+          //           child: DanmakuView(
+          //             key: UniqueKey(),
+          //             createdController: (controller) {
+          //               danmakuController = controller;
+          //             },
+          //             option: DanmakuOption(
+          //               fontSize: 16,
+          //             ),
+          //           )
+          //       ),
+          //       Positioned(
+          //         top: 0,
+          //         width: Get.width,
+          //         height: Get.width * Get.size.aspectRatio + 50,
+          //         child: GestureDetector(
+          //           onTap: () {
+          //             setState(() {
+          //               showDanmakuState =
+          //               !showDanmakuState;
+          //             });
+          //           },
+          //           child: showDanmakuState
+          //               ? _videoPlayerControlArea()
+          //               : Container(
+          //             color: Colors.transparent,
+          //           ),
+          //         ),
+          //       )
+          //     ],
+          //   ),
+          // ),
           const Expanded(
               child: Stack(
                 children: [
@@ -105,25 +129,6 @@ class _LiveRoomPageState extends State<LiveRoomPage>
         ]));
   }
 
-  Widget _videoArea(){
-    return FutureBuilder(
-      future: _initializeVideoPlayerFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return AspectRatio(
-            aspectRatio: _videoPlayerController.value.aspectRatio,
-            child: VideoPlayer(_videoPlayerController),
-          );
-        } else {
-          return SizedBox(
-            height: Get.width * Get.size.aspectRatio + 50,
-            child: const Center(child: CircularProgressIndicator()),
-          );
-        }
-      },
-    );
-  }
-
   Widget _bottomArea() {
     return Row(
       children: [
@@ -132,7 +137,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
         ),
         Expanded(
           child: TextField(
-            controller: _barrageEditingController,
+            controller: controller.barrageEditingController,
             // cursorWidth: 1.5,
             style: const TextStyle(
               color: Color(0xff333333),
@@ -153,129 +158,19 @@ class _LiveRoomPageState extends State<LiveRoomPage>
             color: Colors.cyan,
           ),
           onPressed: () {
-            if (_barrageEditingController.text.isEmpty) return;
-            _addDanmaku([
+            if (controller.barrageEditingController.text.isEmpty) return;
+            controller.addDanmaku([
               DanmakuItem(
-              _barrageEditingController.text,
+                controller.barrageEditingController.text,
             ),]);
-            _barrageEditingController.clear();
+            controller.barrageEditingController.clear();
           },
         )
       ],
     );
   }
 
-  Widget _videoPlayerControlArea() {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: ShaderMask(
-          shaderCallback: (Rect bounds) {
-            return const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: [0.8, 1],
-              colors: [
-                Color.fromRGBO(0, 0, 0, 0),
-                Color.fromRGBO(0, 0, 0, 0.8),
-              ],
-            ).createShader(bounds);
-          },
-          blendMode: BlendMode.color,
-          child: Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                    top: BorderSide(color: Color(0xffeeeeee), width: 0),
-                    bottom: BorderSide(color: Colors.white, width: 0)),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Row(
-                    children: [
-                      _videoPlayerController.value.isPlaying
-                          ? IconButton(
-                              icon: const Icon(
-                                Icons.pause,
-                                color: Colors.white,
-                                size: 24.0,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _videoPlayerController.pause();
-                                });
-                              },
-                            )
-                          : IconButton(
-                              icon: const Icon(
-                                Icons.play_arrow,
-                                color: Colors.white,
-                                size: 24.0,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _videoPlayerController.play();
-                                });
-                              },
-                            ),
-
-                      const Expanded(child: SizedBox()),
-
-                      if (!_isDanmakuShowing)
-                        GestureDetector(
-                          child: SvgPicture.asset("assets/icon/barrage_off.svg",
-                              width: 24, height: 24,
-                            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),),
-                          onTap: () {
-                            _bulletsStart();
-
-                          },
-                        ),
-
-                      if (_isDanmakuShowing)
-                        GestureDetector(
-                          child: SvgPicture.asset("assets/icon/barrage_on.svg",
-                              width: 24, height: 24,
-                            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),),
-                          onTap: () {
-                            _bulletsStop();
-                          },
-                        ),
-
-                      const SizedBox(
-                        width: 10,
-                      ),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.fullscreen,
-                            color: Colors.white,
-                            size: 24.0,
-                          ),
-                          onPressed: () {
-                            // Get.to(() => LiveFullScreenPage(videoPlayerController: _videoPlayerController,));
-                          },
-                        ),
-
-                      // if (_isFullScreen)
-                      //   IconButton(
-                      //     icon: const Icon(
-                      //       Icons.fullscreen_exit,
-                      //       color: Colors.white,
-                      //       size: 24.0,
-                      //     ),
-                      //     onPressed: () {
-                      //       setState(() {
-                      //         _isFullScreen = false;
-                      //       });
-                      //     },
-                      //   ),
-                    ],
-                  ),
-                ],
-              ))),
-    );
-  }
-
-  Widget _commodityButtons(){
+  Widget _commodityButtons(BuildContext context){
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -286,7 +181,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
               color: Colors.white,
               icon: const Icon(Icons.shopping_bag_outlined),
               onPressed: () {
-                ShowCommoditiesListSheet.showCommoditiesListSheet(context, commodities);
+                ShowCommoditiesListSheet.showCommoditiesListSheet(context, controller.commodities);
               }
           ),
         ),
@@ -700,58 +595,5 @@ class _LiveRoomPageState extends State<LiveRoomPage>
         ),
       ),
     );
-  }
-
-  Future<void> _fetchData() async {
-    _bulletsStart();
-
-    _videoPlayerController = VideoPlayerController.networkUrl(
-        Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',));
-    _initializeVideoPlayerFuture = _videoPlayerController.initialize();
-
-    CommoditySpecification commoditySpecification = CommoditySpecification(
-      cid: "1",
-      id: "1",
-      imageUrl: "https://www.zwn2001.space/img/favicon.webp",
-      specification: "Sample Specification",
-      price: 9.99,
-    );
-
-    Commodity testCommodity = Commodity(
-      cid: "123",
-      commodityName: "测试商品",
-      anchorId: "456",
-      anchorName: "测试主播",
-      price: 9.99,
-      freight: 2.99,
-      specification: [commoditySpecification,commoditySpecification],
-      imageUrl: ["https://www.zwn2001.space/img/favicon.webp"],
-    );
-
-    commodities=[testCommodity,testCommodity,testCommodity];
-  }
-
-  void _bulletsStart() {
-    if(!_isDanmakuShowing){
-      _isDanmakuShowing = true;
-       danmakuController?.resume();
-      if(mounted){setState(() {});}
-    }
-  }
-
-  void _bulletsStop() {
-    if(_isDanmakuShowing){
-      _isDanmakuShowing = false;
-      danmakuController?.pause();
-      if(mounted){setState(() {});}
-    }
-  }
-
-  void _addDanmaku(List<DanmakuItem> items) {
-    //todo:api
-    if (!_isDanmakuShowing) {
-      return;
-    }
-    danmakuController?.addItems(items);
   }
 }
