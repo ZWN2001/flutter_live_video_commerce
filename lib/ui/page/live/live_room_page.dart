@@ -31,7 +31,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
   Random random = Random();
   late List<Commodity> commodities;
   late Future<void> _initializeVideoPlayerFuture;
-  bool _isVideoControlAreaShowing = false;
+  bool showDanmakuState = false;
   late VideoPlayerController _videoPlayerController;
   final TextEditingController _barrageEditingController =
       TextEditingController();
@@ -48,49 +48,27 @@ class _LiveRoomPageState extends State<LiveRoomPage>
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("直播")),
-        floatingActionButton: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.blue,
-              child: IconButton(
-                  color: Colors.white,
-                  icon: const Icon(Icons.shopping_bag_outlined),
-                  onPressed: () {
-                    ShowCommoditiesListSheet.showCommoditiesListSheet(context, commodities);
-                  }
-              ),
-            ),
-            const SizedBox(
-              height: 48,
-            ),
-          ],
-        ),
+        floatingActionButton: _commodityButtons(),
         body: Column(children: <Widget>[
           SizedBox(
             width: Get.width,
             child: Stack(
               children: [
                 _videoArea(),
-                if(_isDanmakuShowing)
-                  Visibility(
-                    visible: _isDanmakuShowing,
-                    child: Positioned(
-                      top: 14,
-                      width: Get.width,
-                      height: Get.width * Get.size.aspectRatio + 60,
-                      child: DanmakuView(
-                        key: UniqueKey(),
-                        createdController: (controller) {
-                          danmakuController = controller;
-                        },
-                        option: DanmakuOption(
-                          fontSize: 16,
-                        ),
-                      )
-                    ),
-                  ),
+                Positioned(
+                    top: 14,
+                    width: Get.width,
+                    height: Get.width * Get.size.aspectRatio + 60,
+                    child: DanmakuView(
+                      key: UniqueKey(),
+                      createdController: (controller) {
+                        danmakuController = controller;
+                      },
+                      option: DanmakuOption(
+                        fontSize: 16,
+                      ),
+                    )
+                ),
                 Positioned(
                   top: 0,
                   width: Get.width,
@@ -98,11 +76,11 @@ class _LiveRoomPageState extends State<LiveRoomPage>
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
-                        _isVideoControlAreaShowing =
-                        !_isVideoControlAreaShowing;
+                        showDanmakuState =
+                        !showDanmakuState;
                       });
                     },
-                    child: _isVideoControlAreaShowing
+                    child: showDanmakuState
                         ? _videoPlayerControlArea()
                         : Container(
                       color: Colors.transparent,
@@ -296,6 +274,28 @@ class _LiveRoomPageState extends State<LiveRoomPage>
     );
   }
 
+  Widget _commodityButtons(){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        CircleAvatar(
+          radius: 30,
+          backgroundColor: Colors.blue,
+          child: IconButton(
+              color: Colors.white,
+              icon: const Icon(Icons.shopping_bag_outlined),
+              onPressed: () {
+                ShowCommoditiesListSheet.showCommoditiesListSheet(context, commodities);
+              }
+          ),
+        ),
+        const SizedBox(
+          height: 48,
+        ),
+      ],
+    );
+  }
+
   Future<void> _fetchData() async {
     _bulletsStart();
 
@@ -328,15 +328,8 @@ class _LiveRoomPageState extends State<LiveRoomPage>
   void _bulletsStart() {
     if(!_isDanmakuShowing){
       _isDanmakuShowing = true;
-      List<DanmakuItem> bullets = List<DanmakuItem>.generate(10, (i) {
-        return DanmakuItem(
-          i.toString(),
-        );
-      });
-      _addDanmaku(bullets);
-      if(mounted){
-        setState(() {});
-      }
+       danmakuController?.resume();
+      if(mounted){setState(() {});}
     }
   }
 
@@ -344,9 +337,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
     if(_isDanmakuShowing){
       _isDanmakuShowing = false;
       danmakuController?.pause();
-      if(mounted){
-        setState(() {});
-      }
+      if(mounted){setState(() {});}
     }
   }
 
