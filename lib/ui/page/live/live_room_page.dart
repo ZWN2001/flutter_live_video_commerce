@@ -1,16 +1,19 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_barrage/flutter_barrage.dart';
+// import 'package:flutter_barrage/flutter_barrage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:live_video_commerce/entity/commodity.dart';
 
 import 'package:live_video_commerce/ui/widget/live_room_chat_area.dart';
+import 'package:ns_danmaku/danmaku_controller.dart';
+import 'package:ns_danmaku/danmaku_view.dart';
+import 'package:ns_danmaku/models/danmaku_item.dart';
+import 'package:ns_danmaku/models/danmaku_option.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../entity/commodity_specification.dart';
-import '../../../utils/stroke_text_widget.dart';
 import '../../widget/show_commodities_list_sheet.dart';
 import 'live_full_screen_page.dart';
 
@@ -25,22 +28,15 @@ class LiveRoomPage extends StatefulWidget {
 
 class _LiveRoomPageState extends State<LiveRoomPage>
     with TickerProviderStateMixin {
-  final _barrageWallController = BarrageWallController();
   Random random = Random();
-  List<Bullet> bullets = [];
   late List<Commodity> commodities;
   late Future<void> _initializeVideoPlayerFuture;
   bool _isVideoControlAreaShowing = false;
   late VideoPlayerController _videoPlayerController;
   final TextEditingController _barrageEditingController =
       TextEditingController();
-  bool _isBarrageShowing = false;
-  TextStyle barrageTextStyle = const TextStyle(
-    color: Colors.white,
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    decoration: TextDecoration.none,
-  );
+  DanmakuController? danmakuController;
+  bool _isDanmakuShowing = false;
 
   @override
   void initState() {
@@ -77,19 +73,22 @@ class _LiveRoomPageState extends State<LiveRoomPage>
             child: Stack(
               children: [
                 _videoArea(),
-                if(_isBarrageShowing)
+                if(_isDanmakuShowing)
                   Visibility(
-                    visible: _isBarrageShowing,
+                    visible: _isDanmakuShowing,
                     child: Positioned(
                       top: 14,
                       width: Get.width,
                       height: Get.width * Get.size.aspectRatio + 60,
-                      child: BarrageWall(
-                          debug: false,
-                          safeBottomHeight: 60,
-                          bullets: bullets,
-                          controller: _barrageWallController,
-                          child: Container()),
+                      child: DanmakuView(
+                        key: UniqueKey(),
+                        createdController: (controller) {
+                          danmakuController = controller;
+                        },
+                        option: DanmakuOption(
+                          fontSize: 16,
+                        ),
+                      )
                     ),
                   ),
                 Positioned(
@@ -176,14 +175,10 @@ class _LiveRoomPageState extends State<LiveRoomPage>
           ),
           onPressed: () {
             if (_barrageEditingController.text.isEmpty) return;
-            _barrageWallController.send([
-              Bullet(
-                  child: StrokeTextWidget(
-                    _barrageEditingController.text,
-                    textStyle: barrageTextStyle,
-                  ),
-                  showTime: 0)
-            ]);
+            _addDanmaku([
+              DanmakuItem(
+              _barrageEditingController.text,
+            ),]);
             _barrageEditingController.clear();
           },
         )
@@ -246,7 +241,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
 
                       const Expanded(child: SizedBox()),
 
-                      if (!_isBarrageShowing)
+                      if (!_isDanmakuShowing)
                         GestureDetector(
                           child: SvgPicture.asset("assets/icon/barrage_off.svg",
                               width: 24, height: 24,
@@ -257,7 +252,7 @@ class _LiveRoomPageState extends State<LiveRoomPage>
                           },
                         ),
 
-                      if (_isBarrageShowing)
+                      if (_isDanmakuShowing)
                         GestureDetector(
                           child: SvgPicture.asset("assets/icon/barrage_on.svg",
                               width: 24, height: 24,
@@ -331,17 +326,14 @@ class _LiveRoomPageState extends State<LiveRoomPage>
   }
 
   void _bulletsStart() {
-    if(!_isBarrageShowing){
-      _isBarrageShowing = true;
-      bullets = List<Bullet>.generate(1000, (i) {
-        final showTime = random.nextInt(60000); // in 60s
-        return Bullet(
-            child: StrokeTextWidget(
-              '$i-$showTime',
-              textStyle: barrageTextStyle,
-            ),
-            showTime: showTime);
+    if(!_isDanmakuShowing){
+      _isDanmakuShowing = true;
+      List<DanmakuItem> bullets = List<DanmakuItem>.generate(10, (i) {
+        return DanmakuItem(
+          i.toString(),
+        );
       });
+      _addDanmaku(bullets);
       if(mounted){
         setState(() {});
       }
@@ -349,14 +341,20 @@ class _LiveRoomPageState extends State<LiveRoomPage>
   }
 
   void _bulletsStop() {
-    if(_isBarrageShowing){
-      _isBarrageShowing = false;
-      _barrageWallController.clear();
-      _barrageWallController.disable();
-      bullets.clear();
+    if(_isDanmakuShowing){
+      _isDanmakuShowing = false;
+      danmakuController?.pause();
       if(mounted){
         setState(() {});
       }
     }
+  }
+
+  void _addDanmaku(List<DanmakuItem> items) {
+    //todo:api
+    if (!_isDanmakuShowing) {
+      return;
+    }
+    danmakuController?.addItems(items);
   }
 }
