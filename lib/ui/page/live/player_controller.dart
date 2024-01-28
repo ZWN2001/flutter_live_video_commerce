@@ -11,6 +11,7 @@ import 'package:ns_danmaku/models/danmaku_option.dart';
 
 mixin PlayerMixin {
   GlobalKey<VideoState> globalPlayerKey = GlobalKey<VideoState>();
+  GlobalKey globalDanmuKey = GlobalKey();
 
   /// 播放器实例
   late final player = Player(
@@ -44,6 +45,8 @@ mixin PlayerStateMixin on PlayerMixin {
 
   /// 是否为竖屏直播间
   var isVertical = false.obs;
+
+  Widget? danmakuView;
 
 
   /// 隐藏控制器
