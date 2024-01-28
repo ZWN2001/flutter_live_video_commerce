@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:live_video_commerce/ui/page/search_page.dart';
 
 import '../../../entity/section.dart';
+import '../functions_page/search_page.dart';
 import 'live_section_detail_page.dart';
 
 class LiveSectionPage extends StatefulWidget{

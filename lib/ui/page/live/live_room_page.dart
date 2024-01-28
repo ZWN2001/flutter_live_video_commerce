@@ -18,6 +18,7 @@ class LiveRoomPage extends GetView<LiveRoomController>  {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(LiveRoomController());
     return Obx(
           () {
         if (controller.fullScreenState.value) {

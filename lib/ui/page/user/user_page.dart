@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:live_video_commerce/ui/page/login_page.dart';
+import 'package:live_video_commerce/ui/page/functions_page/login_page.dart';
 import 'package:live_video_commerce/ui/page/user/my_receiving_info_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_cart_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_history_page.dart';

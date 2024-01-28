@@ -6,15 +6,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:live_video_commerce/route/route.dart';
+import 'package:live_video_commerce/ui/page/home_page.dart';
 import 'package:live_video_commerce/utils/constant_string_utils.dart';
 import 'package:live_video_commerce/utils/http_utils.dart';
 import 'package:live_video_commerce/utils/store_utils.dart';
+import 'package:media_kit/media_kit.dart';
 
 import 'api/server.dart';
 
 Future<void> main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
+    MediaKit.ensureInitialized();
     HttpUtils.config(baseUrl: Server.baseUrl);
     await Store.initialize();
     runApp(const MyApp());
@@ -39,7 +42,8 @@ class MyApp extends StatelessWidget {
         colorScheme: mcolorScheme,
         useMaterial3: true,
       ),
-      routes: Routes.routers,
+      onGenerateRoute: RouteTable.generateRoute,
+      home: const HomePage(),
     );
   }
 }

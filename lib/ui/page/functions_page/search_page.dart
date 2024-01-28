@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
-import '../../utils/store_utils.dart';
+import '../../../utils/store_utils.dart';
+
 
 
 class SearchPage extends StatefulWidget {
