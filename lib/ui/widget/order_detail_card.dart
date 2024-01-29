@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:live_video_commerce/entity/commodity.dart';
+import 'package:live_video_commerce/entity/order/order_commodity_detailed_info.dart';
 
-import '../../entity/order.dart';
 import 'item_calculate_widget.dart';
 
+//TODO:检查迁移带来的逻辑问题
 class OrderDetailCard extends StatefulWidget {
-  final Order order;
+  final List<OrderCommodityDetailedInfo> orderList;
   final Function(int countChanged, double priceChanged) onCountChange;
-  const OrderDetailCard({Key? key, required this.order, required this.onCountChange}) : super(key: key);
+  const OrderDetailCard({Key? key, required this.orderList, required this.onCountChange}) : super(key: key);
 
   @override
   State<OrderDetailCard> createState() => _OrderDetailCardState();
@@ -15,14 +16,16 @@ class OrderDetailCard extends StatefulWidget {
 
 class _OrderDetailCardState extends State<OrderDetailCard> {
   int totalCount = 0;
+  double totalPrice = 0;
   final List<Widget> _orderedCommodityItemList = [];
 
   @override
   void initState() {
     super.initState();
-    totalCount = widget.order.quantity.fold(0, (previousValue, element) => previousValue + element);
-    for(int i = 0; i < widget.order.commodity.length; i++){
-      _orderedCommodityItemList.add(_orderedCommodityItem(widget.order.commodity[i],i));
+    totalCount = widget.orderList.fold(0, (previousValue, element) => previousValue + element.quantity);
+    totalPrice = widget.orderList.fold(0, (previousValue, element) => previousValue + element.totalPrice);
+    for(int i = 0; i < widget.orderList.length; i++){
+      _orderedCommodityItemList.add(_orderedCommodityItem(widget.orderList[i].commodity,i));
     }
   }
   @override
@@ -39,7 +42,7 @@ class _OrderDetailCardState extends State<OrderDetailCard> {
                     const Icon(Icons.storefront, color: Colors.grey,),
                     const SizedBox(width: 8.0,),
                     Text(
-                      widget.order.commodity[0].commodityName,
+                      widget.orderList[0].commodity.commodityName,
                       style: const TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
@@ -58,7 +61,7 @@ class _OrderDetailCardState extends State<OrderDetailCard> {
                   const Text('商品总价'),
                   const Expanded(child: SizedBox.shrink()),
                   Text(
-                    '￥${widget.order.totalPrice.toStringAsFixed(2)}',
+                    '￥${totalPrice.toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
@@ -74,7 +77,7 @@ class _OrderDetailCardState extends State<OrderDetailCard> {
                   const Text('运费'),
                   const Expanded(child: SizedBox.shrink()),
                   Text(
-                    '￥${widget.order.commodity[0].freight}',
+                    '￥${widget.orderList[0].commodity.freight}',
                     style: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
@@ -90,7 +93,7 @@ class _OrderDetailCardState extends State<OrderDetailCard> {
                   const Text('需付款'),
                   const Expanded(child: SizedBox.shrink()),
                   Text(
-                    '￥${(widget.order.totalPrice + widget.order.commodity[0].freight).toStringAsFixed(2)}',
+                    '￥${(totalPrice + widget.orderList[0].commodity.freight).toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
@@ -153,7 +156,7 @@ class _OrderDetailCardState extends State<OrderDetailCard> {
                   ),
                 ),
                 Text(
-                  'x${widget.order.quantity[index]}',
+                  'x${widget.orderList[index].quantity}',
                   style: const TextStyle(
                     fontSize: 14.0,
                   ),
@@ -167,10 +170,11 @@ class _OrderDetailCardState extends State<OrderDetailCard> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             ItemCalculateWidget(
-              count: widget.order.quantity[index],
+              count: widget.orderList[index].quantity,
               onCountChanged: (int value) {
-                widget.order.quantity[index] += value;
-                widget.order.totalPrice += value * commodity.price;
+                widget.orderList[index].quantity += value;
+                widget.orderList[index].totalPrice += value * commodity.price;
+                totalPrice += value * commodity.price;
                 //回调改变件数与总价
                 widget.onCountChange(value, value * commodity.price);
                 setState(() {});

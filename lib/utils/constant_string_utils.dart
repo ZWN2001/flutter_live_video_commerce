@@ -22,7 +22,7 @@ class ConstantStringUtils{
   static const String shoppingHistory = '购物历史';
 
   static const Map<int,String> orderStatus = {
-    0: '确认订单',
+    0: '确认订单',//后端不会有待确认这个状态
     1 : '订单待付款',
     2 : '订单待发货',
     3 : '订单待收货',

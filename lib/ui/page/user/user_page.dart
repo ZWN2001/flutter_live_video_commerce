@@ -7,7 +7,7 @@ import 'package:live_video_commerce/ui/page/user/shopping_cart_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_history_page.dart';
 
 import '../../../api/api.dart';
-import '../../../entity/order.dart';
+import '../../../entity/order/order.dart';
 import '../../../entity/user.dart';
 
 class UserPage extends StatefulWidget{

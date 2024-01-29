@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:live_video_commerce/entity/order.dart';
+import 'package:live_video_commerce/entity/order/order.dart';
 
+//TODO:index都需要改
+//TODO:检查迁移带来的逻辑问题
 class MyOrderCard extends StatelessWidget {
-  final Order order;
+  final OrderMini order;
   const MyOrderCard({Key? key, required this.order}) : super(key: key);
 
   @override
@@ -29,7 +31,7 @@ class MyOrderCard extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            order.commodity[0].commodityName,
+            order.commodity.commodityName,
             style: const TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.bold,
@@ -37,7 +39,7 @@ class MyOrderCard extends StatelessWidget {
           ),
         ),
         Text(
-          order.status.toString(),
+          order.orderStatus.toString(),
           style: const TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
@@ -55,7 +57,7 @@ class MyOrderCard extends StatelessWidget {
           child: SizedBox(
             width: 90,
             height: 90,
-            child: Image.network(order.commodity[0].imageUrl[0]),
+            child: Image.network(order.commodity.imageUrl[0]),
           ),
         ),
 
@@ -66,14 +68,14 @@ class MyOrderCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                order.commodity[0].commodityName,
+                order.commodity.commodityName,
                 style: const TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                order.commodity[0].specification[0].specification,
+                order.commodity.specification[0].specification,
                 style: const TextStyle(
                   fontSize: 14.0,
                 ),
@@ -88,7 +90,7 @@ class MyOrderCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              '￥${order.commodity[0].price}',
+              '￥${order.commodity.price}',
               style: const TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold,

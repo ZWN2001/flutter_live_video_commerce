@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:live_video_commerce/entity/order.dart';
+import 'package:live_video_commerce/entity/order/order.dart';
 
 import '../../../entity/commodity.dart';
 import '../../../entity/commodity_specification.dart';
@@ -14,8 +14,9 @@ class ShoppingHistoryPage extends StatefulWidget {
   State<ShoppingHistoryPage> createState() => _ShoppingHistoryPageState();
 }
 
+//TODO:检查迁移带来的逻辑问题
 class _ShoppingHistoryPageState extends State<ShoppingHistoryPage> {
-  List<Order> orderList = [];
+  List<OrderMini> orderList = [];
 
   @override
   void initState() {
@@ -47,17 +48,12 @@ class _ShoppingHistoryPageState extends State<ShoppingHistoryPage> {
       detailedAddress: "123 Main St, City, State",
     );
 
-    Order order = Order(
+    OrderMini order = OrderMini(
       oid: "1",
-      commodity: [commodity],
-      receivingInfo: receivingInfo,
-      status: 0,
-      createdAt: "2022-01-01 10:00:00",
-      payAt: "2022-01-01 10:00:00",
-      shipAt: "2022-01-01 10:00:00",
-      completeAt: "2022-01-01 10:00:00",
+      commodity: commodity,
       totalPrice: 104.99,
-      quantity: [1],
+      quantity: 1,
+      orderStatus: 0,
     );
 
     orderList = [order,order,order,order,order,order,order,order,order,order,order,order,order];

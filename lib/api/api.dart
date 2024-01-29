@@ -144,10 +144,10 @@ class UserAPI{
 
 class LiveRoomAPI{
   static const String _liveRecommend = '${Server.live}/recommend';
+  static const String _liveSection = '${Server.live}/section';
   static const String _liveList = '${Server.live}/list';
   static const String _liveInfo = '${Server.live}/info';
-  static const String _liveAddress = '${Server.live}/address';
-  static const String _barrageAddress = '${Server.live}/barrageAddress';
+  static const String _barrageAddress = '${Server.live}/danmuAddress';
 
   static Future<ResultEntity<List<LiveRoom>>> getRecommendLiveRooms() async {
     try {
