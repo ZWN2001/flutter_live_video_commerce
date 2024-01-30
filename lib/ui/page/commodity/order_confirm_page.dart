@@ -20,7 +20,6 @@ class OrderConfirmPage extends StatefulWidget {
   OrderConfirmPageState createState() => OrderConfirmPageState();
 }
 
-//TODO:检查迁移带来的逻辑问题
 class OrderConfirmPageState extends State<OrderConfirmPage> {
   ReceivingInfo receivingInfo = ReceivingInfo(
     id: '0',
@@ -29,7 +28,7 @@ class OrderConfirmPageState extends State<OrderConfirmPage> {
     locateArea: '山东省 济南市 历城区 港沟街道 ',
     detailedAddress: '舜华路1500号山东大学软件园校区教学楼',
   );
-  List<OrderCommodityDetailedInfo> orderCommodityDetailedInfoList = [];
+  List<List<OrderCommodityDetailedInfo>> orderCommodityDetailedInfoList = [];
   int totalCount = 0;
   double totalPrice = 0;
 
@@ -43,15 +42,19 @@ class OrderConfirmPageState extends State<OrderConfirmPage> {
         orderPrice += value[i].price * widget.commodityCount[key]![i];
       }
 
-      OrderCommodityDetailedInfo orderCommodityDetailedInfo = OrderCommodityDetailedInfo(
-        oid: '1',
-        commodity: value[0],
-        receivingInfo: receivingInfo,
-        totalPrice: orderPrice,
-        quantity: 1
-      );
-
-      orderCommodityDetailedInfoList.add(orderCommodityDetailedInfo);
+      ///购买的单个主播的商品单
+      List<OrderCommodityDetailedInfo> anchorCommodityList = [];
+      for(int i = 0; i < value.length; i++){
+        OrderCommodityDetailedInfo orderCommodityDetailedInfo = OrderCommodityDetailedInfo(
+          oid: '1',
+          commodity: value[i],
+          receivingInfo: receivingInfo,
+          totalPrice: value[i].price * widget.commodityCount[key]![i],
+          quantity: widget.commodityCount[key]![i],
+        );
+        anchorCommodityList.add(orderCommodityDetailedInfo);
+      }
+      orderCommodityDetailedInfoList.add(anchorCommodityList);
 
       //commodityCount[key]求和加到totalCount
       totalCount += widget.commodityCount[key]!.reduce((value, element) => value + element);
@@ -72,15 +75,15 @@ class OrderConfirmPageState extends State<OrderConfirmPage> {
             children: [
               ReceivingInfoCard(receivingInfo: receivingInfo,),
               const SizedBox(height: 12,),
-              OrderDetailCard(
-                orderList: orderCommodityDetailedInfoList,
+              ...orderCommodityDetailedInfoList.map((e) => OrderDetailCard(
+                orderList: e,
                 onCountChange: (int totalCount, double totalPrice) {
                   setState(() {
                     this.totalCount += totalCount;
                     this.totalPrice += totalPrice;
                   });
                 },
-              )
+              )).toList(),
             ],
           )),
           Container(

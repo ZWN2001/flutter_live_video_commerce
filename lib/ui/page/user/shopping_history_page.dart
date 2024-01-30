@@ -14,7 +14,6 @@ class ShoppingHistoryPage extends StatefulWidget {
   State<ShoppingHistoryPage> createState() => _ShoppingHistoryPageState();
 }
 
-//TODO:检查迁移带来的逻辑问题
 class _ShoppingHistoryPageState extends State<ShoppingHistoryPage> {
   List<OrderMini> orderList = [];
 

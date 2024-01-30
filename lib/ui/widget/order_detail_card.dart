@@ -4,7 +4,6 @@ import 'package:live_video_commerce/entity/order/order_commodity_detailed_info.d
 
 import 'item_calculate_widget.dart';
 
-//TODO:检查迁移带来的逻辑问题
 class OrderDetailCard extends StatefulWidget {
   final List<OrderCommodityDetailedInfo> orderList;
   final Function(int countChanged, double priceChanged) onCountChange;

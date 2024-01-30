@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:live_video_commerce/entity/order/order.dart';
 
 //TODO:index都需要改
-//TODO:检查迁移带来的逻辑问题
 class MyOrderCard extends StatelessWidget {
   final OrderMini order;
   const MyOrderCard({Key? key, required this.order}) : super(key: key);
