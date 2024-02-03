@@ -24,9 +24,9 @@ class OrderStatusInfo{
       oid: json['orderId'] as String,
       orderStatus: json['status'] as int,
       createAt: json['createdAt'] as String,
-      payAt: json['payAt'] as String,
-      shipAt: json['shipAt'] as String,
-      completeAt: json['completeAt'] as String,
+      payAt: json['payAt'] ?? '',
+      shipAt: json['shipAt'] ?? '',
+      completeAt: json['completeAt'] ?? '',
     );
   }
 

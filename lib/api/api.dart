@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:live_video_commerce/api/server.dart';
 import 'package:dio/dio.dart';
+import 'package:live_video_commerce/entity/order/order.dart';
 
+import '../entity/commodity.dart';
 import '../entity/live_room.dart';
 import '../entity/result.dart';
+import '../entity/section.dart';
 import '../entity/user.dart';
 import '../state/user_status.dart';
 import '../utils/http_utils.dart';
@@ -19,9 +22,10 @@ class UserAPI{
   static const String _userInfo = '${Server.user}/info';
 
   ///使用post请求对用户信息进行更新
-  static const String _updateProfile = '${Server.user}/info';
+  // static const String _updateProfile = '${Server.user}/info';
 
   static String get token => UserStatus.token;
+  static User? get user => UserStatus.user;
 
   static bool autoLogin() {
     String token = Store.getString('token');
@@ -143,26 +147,63 @@ class UserAPI{
 }
 
 class LiveRoomAPI{
-  static const String _liveRecommend = '${Server.live}/recommend';
+  // static const String _liveRecommend = '${Server.live}/recommend';
   static const String _liveSection = '${Server.live}/section';
   static const String _liveList = '${Server.live}/list';
   static const String _liveInfo = '${Server.live}/info';
-  static const String _barrageAddress = '${Server.live}/danmuAddress';
+
+
+  static Future<ResultEntity<List<Section>>> getSections() async {
+    try {
+      Response response = await HttpUtils.get(_liveSection,
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid) {
+        return ResultEntity.error();
+      }
+      var data = response.data['data'];
+      List<Section> sections = [];
+      for (var item in data) {
+        sections.add(Section.fromJson(item));
+      }
+      return ResultEntity.succeed(data: sections);
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
 
   static Future<ResultEntity<List<LiveRoom>>> getRecommendLiveRooms() async {
     try {
-      //TODO
-      return ResultEntity.error();
+      Response response = await HttpUtils.get(_liveSection,
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid) {
+        return ResultEntity.error();
+      }
+      var data = response.data['data'];
+      List<LiveRoom> rooms = [];
+      for (var item in data) {
+        rooms.add(LiveRoom.fromJson(item));
+      }
+      return ResultEntity.succeed(data: rooms);
     } catch (e) {
       return ResultEntity.error();
     }
   }
 
   ///获取某板块直播间列表
-  static Future<ResultEntity<List<LiveRoom>>> getLiveRooms() async {
+  static Future<ResultEntity<List<LiveRoom>>> getLiveRooms(int sid) async {
     try {
-      //TODO
-      return ResultEntity.error();
+      Response response = await HttpUtils.get(_liveList,
+          params: {'id': sid},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid) {
+        return ResultEntity.error();
+      }
+      var data = response.data['data'];
+      List<LiveRoom> rooms = [];
+      for (var item in data) {
+        rooms.add(LiveRoom.fromJson(item));
+      }
+      return ResultEntity.succeed(data: rooms);
     } catch (e) {
       return ResultEntity.error();
     }
@@ -171,40 +212,146 @@ class LiveRoomAPI{
   ///获取直播间信息
   static Future<ResultEntity<LiveRoom>> getLiveRoomInfo(int id) async {
     try {
-      //TODO
-      return ResultEntity.error();
+      Response response = await HttpUtils.get(_liveInfo,
+          params: {'id': id},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid) {
+        return ResultEntity.error();
+      }
+      var data = response.data['data'];
+      return ResultEntity.succeed(data: LiveRoom.fromJson(data));
     } catch (e) {
       return ResultEntity.error();
     }
   }
 
-  ///获取直播流地址
-  static Future<ResultEntity<String>> getLiveAddress(int id) async {
-    try {
-      //TODO
-      return ResultEntity.error();
-    } catch (e) {
-      return ResultEntity.error();
-    }
-  }
-
-  ///获取弹幕地址
-  static Future<ResultEntity<String>> getBarrageAddress(int id) async {
-    try {
-      //TODO
-      return ResultEntity.error();
-    } catch (e) {
-      return ResultEntity.error();
-    }
-  }
 }
 
 class CommodityAPI{
   static const String _commodity = '${Server.commodity}/liveRoomCommodity';
   static const String _commodityDetail = '${Server.commodity}/commodityDetail';
-  static const String _shoppingHistory = '${Server.commodity}/history';
-  static const String _order = '${Server.commodity}/order';
+  static const String _commodityBrowseHistory = '${Server.commodity}/commodityBrowseHistory';
+  static const String _order = '${Server.commodity}/orders';
   static const String _orderDetail = '${Server.commodity}/orderDetail';
+  static const String _orderCreate = '${Server.commodity}/orderCreate';
   static const String _orderPay = '${Server.commodity}/orderPay';
   static const String _orderCancel = '${Server.commodity}/orderCancel';
+
+  static Future<ResultEntity<List<Commodity>>> getCommodities(int id) async {
+    try {
+      Response response = await HttpUtils.get(_commodity,
+          params: {'liveRoomId': id},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      List<Commodity> list = [];
+      var data = response.data['data'];
+      for (var item in data) {
+        list.add(Commodity.fromJson(item));
+      }
+      return ResultEntity.succeed(data: list);
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity<Commodity>> getCommodityDetail(int id) async {
+    try {
+      Response response = await HttpUtils.get(_commodityDetail,
+          params: {'cid': id},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      return ResultEntity.succeed(data: Commodity.fromJson(response.data['data']));
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity<List<OrderMini>>> getCommodityBrowseHistory() async {
+    try {
+      Response response = await HttpUtils.get(_commodityBrowseHistory,
+          params: {'uid': UserAPI.user!.uid},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      List<OrderMini> list = [];
+      var data = response.data['data'];
+      for (var item in data) {
+        list.add(OrderMini.fromJson(item));
+      }
+      return ResultEntity.succeed(data: list);
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity<Order>> getOrderDetail(int id) async {
+    try {
+      Response response = await HttpUtils.get(_orderDetail,
+          params: {'id': id},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      return ResultEntity.succeed(data: Order.fromJson(response.data['data']));
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity> orderCreate(Order order) async {
+    try {
+      Response response = await HttpUtils.post(_orderCreate,
+          data: {'orderCommodityInfoJson': jsonEncode(order.toJson())},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      return ResultEntity.succeed();
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity> orderPay(int id) async {
+    try {
+      Response response = await HttpUtils.post(_orderPay,
+          data: {'id': id},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      return ResultEntity.succeed();
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity> orderCancel(int id) async {
+    try {
+      Response response = await HttpUtils.post(_orderCancel,
+          data: {'id': id},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      return ResultEntity.succeed();
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+
+}
+
+class ReceivingInfoAPI{
+  static const String _receivingInfo = '${Server.receivingInfo}/receivingInfo';
+  static const String _receivingInfoDetail = '${Server.receivingInfo}/receivingInfoDetail';
+  static const String _receivingInfoAdd = '${Server.receivingInfo}/receivingInfoAdd';
+  static const String _receivingInfoUpdate = '${Server.receivingInfo}/receivingInfoUpdate';
+  static const String _receivingInfoDelete = '${Server.receivingInfo}/receivingInfoDelete';
 }

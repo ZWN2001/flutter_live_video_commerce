@@ -8,6 +8,7 @@ class Server {
   static const String user = "/users";
   static const String live = "/live";
   static const String commodity = "/commodity";
+  static const String receivingInfo = "/receivingInfo";
 
 
 }
