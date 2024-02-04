@@ -7,6 +7,7 @@ import 'package:live_video_commerce/entity/order/order.dart';
 
 import '../entity/commodity.dart';
 import '../entity/live_room.dart';
+import '../entity/receiving_info.dart';
 import '../entity/result.dart';
 import '../entity/section.dart';
 import '../entity/user.dart';
@@ -210,10 +211,10 @@ class LiveRoomAPI{
   }
 
   ///获取直播间信息
-  static Future<ResultEntity<LiveRoom>> getLiveRoomInfo(int id) async {
+  static Future<ResultEntity<LiveRoom>> getLiveRoomInfo(int rid) async {
     try {
       Response response = await HttpUtils.get(_liveInfo,
-          params: {'id': id},
+          params: {'rid': rid},
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid) {
         return ResultEntity.error();
@@ -237,10 +238,10 @@ class CommodityAPI{
   static const String _orderPay = '${Server.commodity}/orderPay';
   static const String _orderCancel = '${Server.commodity}/orderCancel';
 
-  static Future<ResultEntity<List<Commodity>>> getCommodities(int id) async {
+  static Future<ResultEntity<List<Commodity>>> getCommodities(int liveRoomId) async {
     try {
       Response response = await HttpUtils.get(_commodity,
-          params: {'liveRoomId': id},
+          params: {'liveRoomId': liveRoomId},
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
@@ -256,10 +257,10 @@ class CommodityAPI{
     }
   }
 
-  static Future<ResultEntity<Commodity>> getCommodityDetail(int id) async {
+  static Future<ResultEntity<Commodity>> getCommodityDetail(int cid) async {
     try {
       Response response = await HttpUtils.get(_commodityDetail,
-          params: {'cid': id},
+          params: {'cid': cid},
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
@@ -289,10 +290,29 @@ class CommodityAPI{
     }
   }
 
-  static Future<ResultEntity<Order>> getOrderDetail(int id) async {
+  static Future<ResultEntity<List<OrderMini>>> getOrders() async {
+    try {
+      Response response = await HttpUtils.get(_order,
+          params: {'uid': UserAPI.user!.uid},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      List<OrderMini> list = [];
+      var data = response.data['data'];
+      for (var item in data) {
+        list.add(OrderMini.fromJson(item));
+      }
+      return ResultEntity.succeed(data: list);
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity<Order>> getOrderDetail(int cid) async {
     try {
       Response response = await HttpUtils.get(_orderDetail,
-          params: {'id': id},
+          params: {'cid': cid},
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
@@ -317,10 +337,10 @@ class CommodityAPI{
     }
   }
 
-  static Future<ResultEntity> orderPay(int id) async {
+  static Future<ResultEntity> orderPay(int oid) async {
     try {
       Response response = await HttpUtils.post(_orderPay,
-          data: {'id': id},
+          data: {'oid': oid},
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
@@ -331,10 +351,10 @@ class CommodityAPI{
     }
   }
 
-  static Future<ResultEntity> orderCancel(int id) async {
+  static Future<ResultEntity> orderCancel(int oid) async {
     try {
       Response response = await HttpUtils.post(_orderCancel,
-          data: {'id': id},
+          data: {'oid': oid},
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
@@ -354,4 +374,81 @@ class ReceivingInfoAPI{
   static const String _receivingInfoAdd = '${Server.receivingInfo}/receivingInfoAdd';
   static const String _receivingInfoUpdate = '${Server.receivingInfo}/receivingInfoUpdate';
   static const String _receivingInfoDelete = '${Server.receivingInfo}/receivingInfoDelete';
+
+  static Future<ResultEntity<List<ReceivingInfo>>> getReceivingInfos() async {
+    try {
+      Response response = await HttpUtils.get(_receivingInfo,
+          // params: {'uid': UserAPI.user!.uid},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      List<ReceivingInfo> list = [];
+      var data = response.data['data'];
+      for (var item in data) {
+        list.add(ReceivingInfo.fromJson(item));
+      }
+      return ResultEntity.succeed(data: list);
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity<ReceivingInfo>> getReceivingInfoDetail(int id) async {
+    try {
+      Response response = await HttpUtils.get(_receivingInfoDetail,
+          params: {'id': id},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      return ResultEntity.succeed(data: ReceivingInfo.fromJson(response.data['data']));
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity> receivingInfoAdd(ReceivingInfo receivingInfo) async {
+    try {
+      Response response = await HttpUtils.post(_receivingInfoAdd,
+          data: {'receivingInfoJson': jsonEncode(receivingInfo.toJson())},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      return ResultEntity.succeed();
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity> receivingInfoUpdate(ReceivingInfo receivingInfo) async {
+    try {
+      Response response = await HttpUtils.post(_receivingInfoUpdate,
+          data: {'receivingInfoJson': jsonEncode(receivingInfo.toJson())},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      return ResultEntity.succeed();
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity> receivingInfoDelete(int id) async {
+    try {
+      Response response = await HttpUtils.post(_receivingInfoDelete,
+          data: {'id': id},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      return ResultEntity.succeed();
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+
 }
