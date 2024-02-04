@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:live_video_commerce/state/user_status.dart';
 import 'package:live_video_commerce/ui/page/functions_page/login_page.dart';
 import 'package:live_video_commerce/ui/page/user/my_receiving_info_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_cart_page.dart';
@@ -18,8 +19,8 @@ class UserPage extends StatefulWidget{
 
 }
 
-class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
-  late User _user;
+class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin,UserStateMixin{
+  late User? _user;
   late List<Order> orders;
 
   @override
@@ -45,78 +46,7 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
     return SliverAppBar(
       expandedHeight: 160.0,
       pinned: true,
-      flexibleSpace: FlexibleSpaceBar(
-          title: Text(
-            _user.nickname, style: const TextStyle(color: Colors.black54),),
-          background: Container(
-            decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF42a6f3), Color(0xFF6ec0f8)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                )),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(width: 24,),
-
-                ///头像
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        child: ClipOval(
-                          child: SizedBox(
-                            width: 64,
-                            height: 64,
-                            child: Image.network(_user.avatar),
-                          ),
-                        ),
-                        onTap: () {
-                          Get.to(() => const LoginPage());
-                          //TODO
-                        },
-                      ),
-                      const SizedBox(height: 72,),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Container(),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        //圆角
-                        style: ButtonStyle(
-                          foregroundColor: MaterialStateProperty.all(Colors.white),
-                          backgroundColor: MaterialStateProperty.all(Colors.blue),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                        ),
-                        child: const Text("编辑资料"),
-                        onPressed: () async {
-                          User? u = await UserAPI.getUserInfo();
-                          print(u.toString());
-                        },
-                      ),
-                      const SizedBox(height: 16,),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 24,),
-              ],
-            ),
-          )
-      ),
+      flexibleSpace: UserStatus.isLogin ? _buildLoginFlexibleSpaceBar() : _buildUnLoginFlexibleSpaceBar(),
       actions: [
         IconButton(
           icon: const Icon(Icons.settings),
@@ -128,10 +58,152 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
     );
   }
 
+  FlexibleSpaceBar _buildLoginFlexibleSpaceBar(){
+    return FlexibleSpaceBar(
+      title: Text(
+        _user!.nickname, style: const TextStyle(color: Colors.black54),),
+        background: Container(
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF42a6f3), Color(0xFF6ec0f8)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              )),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const SizedBox(width: 24,),
+
+              ///头像
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ClipOval(
+                      child: SizedBox(
+                        width: 64,
+                        height: 64,
+                        child: _user?.avatar == null ? Image.network(_user!.avatar):_unLoginAvatar(),
+                      ),
+                    ),
+                    const SizedBox(height: 72,),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Container(),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      //圆角
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.all(Colors.white),
+                        backgroundColor: MaterialStateProperty.all(Colors.blue),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      ),
+                      child: const Text("编辑资料"),
+                      onPressed: () async {
+                        User? u = UserAPI.user!;
+                        print(u.toString());
+                      },
+                    ),
+                    const SizedBox(height: 16,),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 24,),
+            ],
+          ),
+        )
+    );
+  }
+
+  FlexibleSpaceBar _buildUnLoginFlexibleSpaceBar(){
+    return FlexibleSpaceBar(
+        title: const Text(
+          '您尚未登录', style: TextStyle(color: Colors.black54),),
+        background: Container(
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF42a6f3), Color(0xFF6ec0f8)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              )),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const SizedBox(width: 24,),
+
+              ///头像
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      child: ClipOval(
+                        child: SizedBox(
+                          width: 64,
+                          height: 64,
+                          child: _unLoginAvatar(),
+                        ),
+                      ),
+                      onTap: () {
+                        Get.to(() => const LoginPage());
+                      },
+                    ),
+                    const SizedBox(height: 72,),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Container(),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      //圆角
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.all(Colors.white),
+                        backgroundColor: MaterialStateProperty.all(Colors.blue),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      ),
+                      child: const Text("登录"),
+                      onPressed: () async {
+                        Get.to(() => const LoginPage());
+                      },
+                    ),
+                    const SizedBox(height: 16,),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 24,),
+            ],
+          ),
+        )
+    );
+  }
+
   Widget _buildBody() {
     return Container(
       color: Colors.grey[200],
-      child:MediaQuery.removePadding(
+      child: MediaQuery.removePadding(
         removeTop: true,
         context: context,
         child: ListView(
@@ -141,8 +213,18 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
             _myOrdersCard(),
             const SizedBox(height: 8,),
             _mySettingsCard(),
+            const SizedBox(height: 32,),
 
-            Padding(padding: const EdgeInsets.only(left: 32,right: 32,top: 16),child: ElevatedButton(onPressed: (){}, child: const Text('退出登录'),),)
+            if(_user?.uid != null)
+              Center(
+                child: Text('uid: ${_user?.uid}',
+                  style: const TextStyle(color: Colors.grey),),
+              ),
+            if(_user?.uid != null)
+              Padding(padding: const EdgeInsets.only(left: 48,right: 48),child: ElevatedButton(onPressed: (){
+                //todo
+              }, child: const Text('退出登录'),),)
+
 
           ],
         ),
@@ -268,15 +350,26 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin{
     );
   }
 
+  Widget _unLoginAvatar(){
+    return Container(
+      color: Colors.white,
+      child: const Icon(Icons.person, size: 56, color: Colors.blue,),
+    );
+  }
+
 
 
   Future<void> _fetchData() async {
-    _user = User(
-      uid: "1234567890",
-      nickname: "John Doe",
-      password: "password123",
-      avatar: "https://www.zwn2001.space/img/favicon.webp",
-    );
+    _user = UserAPI.user;
+  }
+
+  @override
+  void onUserStateChanged(User? user) {
+    if (user != null && mounted) {
+      setState(() {
+        _user = user;
+      });
+    }
   }
 
 }

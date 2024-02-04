@@ -1,7 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
 
 import '../../../api/api.dart';
 import '../../../entity/result.dart';
@@ -91,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
       },
       onLogin: _authUser,
       onSubmitAnimationCompleted: () {
-        context.goNamed(Routes.home);
+        Get.back();
       },
       onConfirmRecover: (a, b) {
         return null;

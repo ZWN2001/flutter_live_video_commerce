@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 class Server {
-  static const String host = "http://192.168.43.238:8081";
+  static const String host = "http://192.168.0.6:8081";
   static const String baseUrl = host;
   // static const String wsServer = 'wss://---/wss/';
 
