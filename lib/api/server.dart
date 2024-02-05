@@ -6,7 +6,7 @@ class Server {
   // static const String wsServer = 'wss://---/wss/';
 
   static const String user = "/users";
-  static const String live = "/live";
+  static const String live = "/liveRoom";
   static const String commodity = "/commodity";
   static const String receivingInfo = "/receivingInfo";
 

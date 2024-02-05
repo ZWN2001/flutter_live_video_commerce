@@ -150,14 +150,13 @@ class UserAPI{
 class LiveRoomAPI{
   // static const String _liveRecommend = '${Server.live}/recommend';
   static const String _liveSection = '${Server.live}/section';
-  static const String _liveList = '${Server.live}/list';
-  static const String _liveInfo = '${Server.live}/info';
+  static const String _liveList = '${Server.live}/liveRoomList';
+  static const String _liveInfo = '${Server.live}/liveRoomInfo';
 
 
   static Future<ResultEntity<List<Section>>> getSections() async {
     try {
-      Response response = await HttpUtils.get(_liveSection,
-          options: Options(headers: {'Token': UserAPI.token}));
+      Response response = await HttpUtils.get(_liveSection);
       if(!response.valid) {
         return ResultEntity.error();
       }
@@ -191,21 +190,20 @@ class LiveRoomAPI{
   }
 
   ///获取某板块直播间列表
-  static Future<ResultEntity<List<LiveRoom>>> getLiveRooms(int sid) async {
+  static Future<ResultEntity<List<LiveRoomMini>>> getLiveRooms(int sid) async {
     try {
-      Response response = await HttpUtils.get(_liveList,
-          params: {'id': sid},
-          options: Options(headers: {'Token': UserAPI.token}));
+      Response response = await HttpUtils.get(_liveList, params: {'sid': sid});
       if(!response.valid) {
         return ResultEntity.error();
       }
       var data = response.data['data'];
-      List<LiveRoom> rooms = [];
+      List<LiveRoomMini> rooms = [];
       for (var item in data) {
-        rooms.add(LiveRoom.fromJson(item));
+        rooms.add(LiveRoomMini.fromJson(item));
       }
       return ResultEntity.succeed(data: rooms);
     } catch (e) {
+      debugPrint(e.toString());
       return ResultEntity.error();
     }
   }
@@ -213,15 +211,14 @@ class LiveRoomAPI{
   ///获取直播间信息
   static Future<ResultEntity<LiveRoom>> getLiveRoomInfo(int rid) async {
     try {
-      Response response = await HttpUtils.get(_liveInfo,
-          params: {'rid': rid},
-          options: Options(headers: {'Token': UserAPI.token}));
+      Response response = await HttpUtils.get(_liveInfo, params: {'rid': rid});
       if(!response.valid) {
         return ResultEntity.error();
       }
       var data = response.data['data'];
       return ResultEntity.succeed(data: LiveRoom.fromJson(data));
     } catch (e) {
+      debugPrint(e.toString());
       return ResultEntity.error();
     }
   }

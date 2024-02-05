@@ -1,6 +1,6 @@
 //直播分区
 class Section {
-  String sid;
+  int sid;
   String sectionName;
 
   Section({
@@ -10,8 +10,8 @@ class Section {
 
   factory Section.fromJson(Map<String, dynamic> jsonMap) {
     return Section(
-      sid: jsonMap['sectionId'] as String,
-      sectionName: jsonMap['title'] as String,
+      sid: jsonMap['sid'] as int,
+      sectionName: jsonMap['sectionName'] as String,
     );
   }
 

@@ -13,45 +13,36 @@ class LiveRoomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // color: Colors.blue,
+    return Padding(
       padding: const EdgeInsets.all(2),
-      child: GestureDetector(
-          child: Stack(
-            children: [
-              Positioned(
-                top: 0, left: 0,
-                child: SizedBox(width: width ,child: Image.network(liveRoom.coverUrl, fit: BoxFit.fitWidth,),),),
-              Positioned(
-                bottom: 4, left: 4,
-                child: Text(liveRoom.anchorName,overflow: TextOverflow.ellipsis,),),
-              Positioned(
-                  bottom: 4, right: 4,
-                  child: Row(
-                    children: [
-                      const Icon(Icons.person, size: 16, color: Colors.black54,),
-                      Text(liveRoom.onlineCount.toString()),
-                    ],
-                  )),
-            ],
-          ),
-          // child: Column(
-          //   children: [
-          //
-          //     Row(
-          //       children: [
-          //         const SizedBox(width: 8,),
-          //         Text(liveRoom.title, overflow: TextOverflow.ellipsis,),
-          //         const Expanded(child: SizedBox(),),
-          //         if(liveRoom.roomSectionName != "")
-          //           Text(liveRoom.roomSectionName, style: const TextStyle(color: Colors.grey),),
-          //       ],
-          //     )
-          //   ],
-          // ),
-          onTap: () {
-            Get.to(() => LiveRoomPage(roomid: liveRoom.rid));
-          }
+      child: Container(
+        //圆角
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: GestureDetector(
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 0, left: 0,
+                  child: SizedBox(width: width, height: width * 0.62, child: Image.network(liveRoom.coverUrl, fit: BoxFit.fitWidth,),),),
+                Positioned(
+                  bottom: 2, left: 4,
+                  child: Text(liveRoom.roomName,overflow: TextOverflow.ellipsis,),),
+                // Positioned(
+                //     bottom: 4, right: 4,
+                //     child: Row(
+                //       children: [
+                //         const Icon(Icons.person, size: 16, color: Colors.black54,),
+                //         Text(liveRoom.onlineCount.toString()),
+                //       ],
+                //     )),
+              ],
+            ),
+            onTap: () {
+              Get.to(() => const LiveRoomPage(),arguments: liveRoom.rid);
+            }
+        ),
       ),
     );
   }

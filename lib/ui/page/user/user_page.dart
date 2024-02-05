@@ -46,7 +46,7 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin,
     return SliverAppBar(
       expandedHeight: 160.0,
       pinned: true,
-      flexibleSpace: UserStatus.isLogin ? _buildLoginFlexibleSpaceBar() : _buildUnLoginFlexibleSpaceBar(),
+      flexibleSpace: _user != null ? _buildLoginFlexibleSpaceBar() : _buildUnLoginFlexibleSpaceBar(),
       actions: [
         IconButton(
           icon: const Icon(Icons.settings),
@@ -221,9 +221,26 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin,
                   style: const TextStyle(color: Colors.grey),),
               ),
             if(_user?.uid != null)
-              Padding(padding: const EdgeInsets.only(left: 48,right: 48),child: ElevatedButton(onPressed: (){
-                //todo
-              }, child: const Text('退出登录'),),)
+              Padding(padding: const EdgeInsets.only(left: 48, right: 48),
+                child: ElevatedButton(onPressed: () {
+                  //退出登录确认
+                  showDialog(context: context, builder: (context) {
+                    return AlertDialog(
+                      title: const Text('退出登录'),
+                      content: const Text('确定要退出登录吗？'),
+                      actions: [
+                        TextButton(onPressed: () {
+                          Navigator.pop(context);
+                        }, child: const Text('取消'),),
+                        TextButton(onPressed: () async {
+                          await UserAPI.logout();
+                          Get.back();
+                          setState(() {});
+                        }, child: const Text('确定'),),
+                      ],
+                    );
+                  });
+                }, child: const Text('退出登录'),),)
 
 
           ],
@@ -365,7 +382,7 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin,
 
   @override
   void onUserStateChanged(User? user) {
-    if (user != null && mounted) {
+    if (mounted) {
       setState(() {
         _user = user;
       });

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:live_video_commerce/api/api.dart';
 
+import '../../../entity/result.dart';
 import '../../../entity/section.dart';
 import '../functions_page/search_page.dart';
 import 'live_section_detail_page.dart';
@@ -104,9 +106,12 @@ class LiveSectionPageState extends State<LiveSectionPage> with SingleTickerProvi
     setState(() {
       _loading = true;
     });
-    // _sections = await SectionAPI.sectionList();
-    Section s = Section(sid: "1", sectionName: "分区1",);
-    _sections = [s,s];
+    ResultEntity<List<Section>> result = await LiveRoomAPI.getSections();
+    if(result.success){
+      _sections = result.data!;
+    } else {
+      _sections = [];
+    }
     _tabController = TabController(length: _sections.length, vsync: this);
     _loading = false;
     if (mounted) {
@@ -117,7 +122,9 @@ class LiveSectionPageState extends State<LiveSectionPage> with SingleTickerProvi
   Widget _buildBody() {
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
-    }  else {
+    }else if(_sections.isEmpty){
+      return const Center(child: Text("暂无数据"));
+    }else {
       return TabBarView(
         controller: _tabController,
         children: [

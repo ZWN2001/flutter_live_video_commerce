@@ -1,23 +1,22 @@
 
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:live_video_commerce/api/api.dart';
 import 'package:live_video_commerce/entity/live_room.dart';
 
 import 'package:live_video_commerce/ui/page/live/player_controller.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../../entity/commodity.dart';
 import '../../../entity/commodity_specification.dart';
+import '../../../entity/result.dart';
 
 class LiveRoomController extends PlayerController with WidgetsBindingObserver{
 
-  late Rx<LiveRoom> liveRoom;
+  LiveRoom liveRoom = LiveRoom.empty();
 
-  late List<Commodity> commodities;
-  late Future<void> initializeVideoPlayerFuture;
+  List<Commodity> commodities = [];
 
   final TextEditingController barrageEditingController =
   TextEditingController();
@@ -29,6 +28,7 @@ class LiveRoomController extends PlayerController with WidgetsBindingObserver{
     WidgetsBinding.instance.addObserver(this);
 
     fetchData();
+    update();
   }
 
   void refreshRoom() {
@@ -39,7 +39,6 @@ class LiveRoomController extends PlayerController with WidgetsBindingObserver{
   }
 
   Future<void> fetchData() async {
-    // bulletsStart();
     CommoditySpecification commoditySpecification = CommoditySpecification(
       cid: "1",
       id: "1",
@@ -60,22 +59,17 @@ class LiveRoomController extends PlayerController with WidgetsBindingObserver{
     );
 
     commodities=[testCommodity,testCommodity,testCommodity];
+    int rid = Get.arguments;
 
-    liveRoom = LiveRoom(
-      rid: "123",
-      uid: "456",
-      sectionId: 1,
-      roomName: "测试直播间",
-      liveUrl: "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4",
-      coverUrl: "https://www.zwn2001.space/img/favicon.webp",
-      description: "测试直播间",
-      status: 0,
-    ).obs;
-
-    player.open(
-      Media(liveRoom.value.liveUrl),
-    );
-
+    ResultEntity<LiveRoom> result = await LiveRoomAPI.getLiveRoomInfo(rid);
+    if(result.success) {
+      liveRoom = result.data!;
+      player.open(
+        Media(liveRoom.liveUrl),
+      );
+    } else {
+      Get.snackbar("直播间加载失败", result.message);
+    }
   }
 
   // void bulletsStart() {

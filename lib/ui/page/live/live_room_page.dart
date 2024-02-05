@@ -12,9 +12,7 @@ import '../../widget/show_commodities_list_sheet.dart';
 import 'live_controller.dart';
 
 class LiveRoomPage extends GetView<LiveRoomController>  {
-  final String roomid;
-
-  const LiveRoomPage({Key? key, required this.roomid}) : super(key: key);
+  const LiveRoomPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +52,10 @@ class LiveRoomPage extends GetView<LiveRoomController>  {
           aspectRatio: aspectRatio,
           fit: boxFit,
         ),
-        Obx(
-              () =>
+        // Obx(
+        //       () =>
               Visibility(
-                visible: controller.liveRoom.value.status != 0,
+                visible: controller.liveRoom.status == 1,
                 child: const Center(
                   child: Text(
                     "未开播",
@@ -65,14 +63,14 @@ class LiveRoomPage extends GetView<LiveRoomController>  {
                   ),
                 ),
               ),
-        ),
+        // ),
       ],
     );
   }
 
   Widget buildPageUI(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(controller.liveRoom.value.roomName)),
+        appBar: AppBar(title: Text(controller.liveRoom.roomName)),
         floatingActionButton: _commodityButtons(context),
         body: Column(children: <Widget>[
           AspectRatio(
@@ -296,7 +294,7 @@ class LiveRoomPage extends GetView<LiveRoomController>  {
                   // AppStyle.hGap12,
                   Expanded(
                     child: Text(
-                      controller.liveRoom.value.roomName,
+                      controller.liveRoom.roomName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(color: Colors.white, fontSize: 16),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:get/get.dart';
+import 'package:live_video_commerce/api/api.dart';
+import 'package:live_video_commerce/entity/result.dart';
 import 'package:live_video_commerce/utils/constant_string_utils.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
@@ -36,9 +38,7 @@ class LiveSectionDetailPageState extends State<LiveSectionDetailPage>{
       body: SmartRefresher(
         enablePullDown: true,
         enablePullUp: true,
-        // primary: false,
         physics: const ClampingScrollPhysics(),
-        // scrollController: ScrollController(),
         header: ConstantStringUtils.classicHeader,
         footer: ConstantStringUtils.classicFooter,
         controller: _refreshController,
@@ -63,12 +63,11 @@ class LiveSectionDetailPageState extends State<LiveSectionDetailPage>{
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              //禁用滑动事件
               scrollDirection: Axis.vertical,
               itemCount: _liveRoomMiniList.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 1.4 ,
+                childAspectRatio: 1.3 ,
               ),
               itemBuilder: (context, index) {
                 return LiveRoomCard(liveRoom: _liveRoomMiniList[index],width: Get.width/2,);
@@ -82,22 +81,20 @@ class LiveSectionDetailPageState extends State<LiveSectionDetailPage>{
 
   Future<void> _fetchData() async {
     _swiperImageUrlList = [];
-    LiveRoomMini mini = LiveRoomMini(
-    rid: "1",
-    roomName: "title",
-    coverUrl: "https://live-cover.msstatic.com/huyalive/1199533567890-1199533567890-5315847976780824576-2399067259236-10057-A-0-1/20240104140701.jpg",
-    anchorName: "anchorName",
-    onlineCount: 1,
-    );
-    _liveRoomMiniList = [mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,mini,];
+    ResultEntity<List<LiveRoomMini>> result = await LiveRoomAPI.getLiveRooms(widget.section.sid);
+    if(result.success){
+      _liveRoomMiniList = result.data!;
+    }
   }
 
   void _onRefresh() async{
-    await Future.delayed(Duration(milliseconds: 1000));
+    _liveRoomMiniList.clear();
+    await _fetchData();
     _refreshController.refreshCompleted();
   }
 
   void _onLoading() async{
+    //TODO:load more
     await Future.delayed(Duration(milliseconds: 1000));
     if(mounted)
       setState(() {});
