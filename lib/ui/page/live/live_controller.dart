@@ -70,6 +70,13 @@ class LiveRoomController extends PlayerController with WidgetsBindingObserver{
     } else {
       Get.snackbar("直播间加载失败", result.message);
     }
+
+    ResultEntity<List<Commodity>> commodityResult = await CommodityAPI.getCommodities(rid);
+    print(commodityResult.data);
+    if(commodityResult.success) {
+      commodities = commodityResult.data!;
+    }
+
   }
 
   // void bulletsStart() {

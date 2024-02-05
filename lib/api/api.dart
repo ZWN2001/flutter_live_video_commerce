@@ -238,8 +238,7 @@ class CommodityAPI{
   static Future<ResultEntity<List<Commodity>>> getCommodities(int liveRoomId) async {
     try {
       Response response = await HttpUtils.get(_commodity,
-          params: {'liveRoomId': liveRoomId},
-          options: Options(headers: {'Token': UserAPI.token}));
+          params: {'liveRoomId': liveRoomId});
       if(!response.valid){
         return ResultEntity.error();
       }
@@ -250,6 +249,7 @@ class CommodityAPI{
       }
       return ResultEntity.succeed(data: list);
     } catch (e) {
+      debugPrint(e.toString());
       return ResultEntity.error();
     }
   }

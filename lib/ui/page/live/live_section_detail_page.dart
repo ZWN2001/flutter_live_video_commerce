@@ -80,11 +80,12 @@ class LiveSectionDetailPageState extends State<LiveSectionDetailPage>{
   }
 
   Future<void> _fetchData() async {
-    _swiperImageUrlList = [];
+    _swiperImageUrlList = [];//TODO
     ResultEntity<List<LiveRoomMini>> result = await LiveRoomAPI.getLiveRooms(widget.section.sid);
     if(result.success){
       _liveRoomMiniList = result.data!;
     }
+    setState(() {});
   }
 
   void _onRefresh() async{

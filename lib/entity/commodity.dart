@@ -38,16 +38,17 @@ class Commodity{
         price = element.price;
       }
     }
+    List<String> images = (json['imageUrl'] as List).map((item) => item as String).toList();
 
     return Commodity(
-      cid: json['id'] as String,
-      commodityName: json['name'] as String,
+      cid: json['cid'] as String,
+      commodityName: json['commodityName'] as String,
       anchorId: json['anchorId'] as String,
       anchorName: json['anchorName'] as String,
       price: price,
       freight: json['freight'] as double,
       specification: specification,
-      imageUrl: json['image'] as List<String>,
+      imageUrl: images,
     );
   }
 
