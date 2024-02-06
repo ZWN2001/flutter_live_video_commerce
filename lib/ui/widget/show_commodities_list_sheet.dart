@@ -1,7 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 
-import '../../entity/commodity.dart';
+import '../../entity/commodity/commodity.dart';
 import '../page/commodity/commodity_detail_page.dart';
 
 class ShowCommoditiesListSheet {

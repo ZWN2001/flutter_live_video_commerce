@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 
-import '../../../entity/commodity.dart';
-import '../../../entity/commodity_specification.dart';
+import '../../../entity/commodity/commodity.dart';
+import '../../../entity/commodity/commodity_specification.dart';
 import '../../widget/item_calculate_widget.dart';
 import '../commodity/order_confirm_page.dart';
 

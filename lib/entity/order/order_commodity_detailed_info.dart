@@ -1,5 +1,5 @@
-import '../commodity.dart';
-import '../receiving_info.dart';
+import '../commodity/commodity.dart';
+import '../commodity/receiving_info.dart';
 
 class OrderCommodityDetailedInfo{
   String oid;

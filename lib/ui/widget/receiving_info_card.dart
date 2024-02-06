@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:live_video_commerce/entity/receiving_info.dart';
+import 'package:live_video_commerce/entity/commodity/receiving_info.dart';
 
 class ReceivingInfoCard extends StatelessWidget {
   final ReceivingInfo receivingInfo;

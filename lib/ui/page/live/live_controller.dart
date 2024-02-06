@@ -8,8 +8,9 @@ import 'package:live_video_commerce/entity/live_room.dart';
 import 'package:live_video_commerce/ui/page/live/player_controller.dart';
 import 'package:media_kit/media_kit.dart';
 
-import '../../../entity/commodity.dart';
-import '../../../entity/commodity_specification.dart';
+import '../../../entity/commodity/commodity.dart';
+
+import '../../../entity/commodity/commodity_specification.dart';
 import '../../../entity/result.dart';
 
 class LiveRoomController extends PlayerController with WidgetsBindingObserver{

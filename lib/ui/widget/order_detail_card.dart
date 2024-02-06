@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:live_video_commerce/entity/commodity.dart';
+import 'package:live_video_commerce/entity/commodity/commodity.dart';
 import 'package:live_video_commerce/entity/order/order_commodity_detailed_info.dart';
 
 import 'item_calculate_widget.dart';

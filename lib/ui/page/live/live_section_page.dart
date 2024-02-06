@@ -15,7 +15,7 @@ class LiveSectionPage extends StatefulWidget{
 
 }
 
-class LiveSectionPageState extends State<LiveSectionPage> with SingleTickerProviderStateMixin{
+class LiveSectionPageState extends State<LiveSectionPage> with TickerProviderStateMixin{
   bool _loading = true;
 
   List<Section> _sections = [];
@@ -102,6 +102,26 @@ class LiveSectionPageState extends State<LiveSectionPage> with SingleTickerProvi
     );
   }
 
+  Widget _buildBody() {
+    if (_loading) {
+      return const Center(child: CircularProgressIndicator());
+    }else if(_sections.isEmpty){
+      return GestureDetector(
+        onTap: _fetchData,
+        child: const Center(child: Text("暂无数据,点击刷新")),
+      );
+    }else {
+      return TabBarView(
+        controller: _tabController,
+        children: [
+          ..._sections.map((e) => LiveSectionDetailPage(
+            section: e,
+          ))
+        ],
+      );
+    }
+  }
+
   Future<void> _fetchData() async {
     setState(() {
       _loading = true;
@@ -116,23 +136,6 @@ class LiveSectionPageState extends State<LiveSectionPage> with SingleTickerProvi
     _loading = false;
     if (mounted) {
       setState(() {});
-    }
-  }
-
-  Widget _buildBody() {
-    if (_loading) {
-      return const Center(child: CircularProgressIndicator());
-    }else if(_sections.isEmpty){
-      return const Center(child: Text("暂无数据"));
-    }else {
-      return TabBarView(
-        controller: _tabController,
-        children: [
-          ..._sections.map((e) => LiveSectionDetailPage(
-            section: e,
-          ))
-        ],
-      );
     }
   }
 

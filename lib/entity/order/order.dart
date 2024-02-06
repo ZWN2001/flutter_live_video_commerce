@@ -1,5 +1,5 @@
-import 'package:live_video_commerce/entity/commodity.dart';
-import 'package:live_video_commerce/entity/receiving_info.dart';
+import 'package:live_video_commerce/entity/commodity/commodity.dart';
+import 'package:live_video_commerce/entity/commodity/receiving_info.dart';
 
 import 'order_commodity_detailed_info.dart';
 import 'order_commodity_info.dart';

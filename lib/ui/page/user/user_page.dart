@@ -10,6 +10,7 @@ import 'package:live_video_commerce/ui/page/user/shopping_history_page.dart';
 import '../../../api/api.dart';
 import '../../../entity/order/order.dart';
 import '../../../entity/user.dart';
+import '../../../route/route.dart';
 
 class UserPage extends StatefulWidget{
   const UserPage({super.key});
@@ -331,7 +332,7 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin,
       child: Column(
         children: [
           _settingsRow(Icons.shopping_cart_outlined, '我的购物车', () {
-            Get.to(() => const ShoppingCartPage());
+            Get.toNamed(RouteTable.shoppingCart);
           }),
           const Divider(height: 0,),
           _settingsRow(Icons.star_border, '我关注的直播间', () {

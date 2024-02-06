@@ -3,7 +3,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:live_video_commerce/ui/page/user/edit_receiving_info_page.dart';
 
-import '../../../entity/receiving_info.dart';
+import '../../../entity/commodity/receiving_info.dart';
 
 class MyReceivingInfoPage extends StatefulWidget {
   const MyReceivingInfoPage({super.key});

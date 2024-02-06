@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:live_video_commerce/entity/order/order_commodity_detailed_info.dart';
 import 'package:live_video_commerce/utils/constant_string_utils.dart';
 
-import '../../../entity/commodity.dart';
-import '../../../entity/receiving_info.dart';
+import '../../../entity/commodity/commodity.dart';
+import '../../../entity/commodity/receiving_info.dart';
 import '../../widget/order_detail_card.dart';
 import '../../widget/receiving_info_card.dart';
 

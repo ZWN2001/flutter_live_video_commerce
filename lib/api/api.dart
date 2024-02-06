@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:live_video_commerce/api/server.dart';
 import 'package:dio/dio.dart';
+import 'package:live_video_commerce/entity/commodity/shopping_cart_item.dart';
 import 'package:live_video_commerce/entity/order/order.dart';
 
-import '../entity/commodity.dart';
+import '../entity/commodity/commodity.dart';
 import '../entity/live_room.dart';
-import '../entity/receiving_info.dart';
+import '../entity/commodity/receiving_info.dart';
 import '../entity/result.dart';
 import '../entity/section.dart';
 import '../entity/user.dart';
@@ -234,6 +235,9 @@ class CommodityAPI{
   static const String _orderCreate = '${Server.commodity}/orderCreate';
   static const String _orderPay = '${Server.commodity}/orderPay';
   static const String _orderCancel = '${Server.commodity}/orderCancel';
+  static const String _shoppingCartAdd = '${Server.commodity}/shoppingCartAdd';
+  static const String _shoppingCart = '${Server.commodity}/shoppingCart';
+  static const String _shoppingCartDelete = '${Server.commodity}/shoppingCartDelete';
 
   static Future<ResultEntity<List<Commodity>>> getCommodities(int liveRoomId) async {
     try {
@@ -352,6 +356,52 @@ class CommodityAPI{
     try {
       Response response = await HttpUtils.post(_orderCancel,
           data: {'oid': oid},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      return ResultEntity.succeed();
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity> shoppingCartAdd(ShoppingCartItem shoppingCartItem) async {
+    try {
+      Response response = await HttpUtils.post(_shoppingCartAdd,
+          data: {'shoppingCartItemJsonString': jsonEncode(shoppingCartItem.toJson())},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      return ResultEntity.succeed();
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity<List<Commodity>>> getShoppingCart() async {
+    try {
+      Response response = await HttpUtils.get(_shoppingCart,
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      List<Commodity> list = [];
+      var data = response.data['data'];
+      for (var item in data) {
+        list.add(Commodity.fromJson(item));
+      }
+      return ResultEntity.succeed(data: list);
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity> shoppingCartDelete(List<ShoppingCartItem> items) async {
+    try {
+      Response response = await HttpUtils.post(_shoppingCartDelete,
+          data: {'listJsonString': jsonEncode(items.map((e) => e.toJson()).toList())},
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();

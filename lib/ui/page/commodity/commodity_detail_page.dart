@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:live_video_commerce/ui/page/commodity/specification_select_page.dart';
 import 'package:live_video_commerce/ui/page/user/shopping_cart_page.dart';
 
-import '../../../entity/commodity.dart';
+import '../../../entity/commodity/commodity.dart';
 import 'order_confirm_page.dart';
 
 class CommodityDetailPage extends StatefulWidget {

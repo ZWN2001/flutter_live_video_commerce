@@ -1,4 +1,4 @@
-import 'package:live_video_commerce/entity/commodity_specification.dart';
+import 'package:live_video_commerce/entity/commodity/commodity_specification.dart';
 
 class Commodity{
   //商品id

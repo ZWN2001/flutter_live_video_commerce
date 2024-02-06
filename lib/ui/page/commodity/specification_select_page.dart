@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:live_video_commerce/entity/commodity_specification.dart';
 import 'package:live_video_commerce/ui/widget/item_calculate_widget.dart';
 
-import '../../../entity/commodity.dart';
+import '../../../entity/commodity/commodity.dart';
+import '../../../entity/commodity/commodity_specification.dart';
 
 class SpecificationSelectPage extends StatefulWidget {
   final Commodity commodity;
