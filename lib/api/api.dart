@@ -380,20 +380,22 @@ class CommodityAPI{
     }
   }
 
-  static Future<ResultEntity<List<Commodity>>> getShoppingCart() async {
+  static Future<ResultEntity<Map<Commodity,int>>> getShoppingCart() async {
     try {
       Response response = await HttpUtils.get(_shoppingCart,
-          options: Options(headers: {'Token': UserAPI.token}));
+          options: Options(headers: {'token': UserAPI.token}));
       if(!response.valid){
-        return ResultEntity.error();
+        return ResultEntity.error(data: response.data);
       }
-      List<Commodity> list = [];
-      var data = response.data['data'];
-      for (var item in data) {
-        list.add(Commodity.fromJson(item));
-      }
-      return ResultEntity.succeed(data: list);
+      Map<Commodity,int> map = {};
+      Map data = response.data['data'];
+      data.forEach((key, value) {
+        Commodity commodity = Commodity.fromJson(json.decode(key));
+        map[commodity] = value;
+      });
+      return ResultEntity.succeed(data: map);
     } catch (e) {
+      print(e);
       return ResultEntity.error();
     }
   }

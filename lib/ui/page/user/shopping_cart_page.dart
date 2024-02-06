@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
+import 'package:live_video_commerce/api/api.dart';
+import 'package:live_video_commerce/entity/result.dart';
 
 import '../../../entity/commodity/commodity.dart';
-import '../../../entity/commodity/commodity_specification.dart';
 import '../../widget/item_calculate_widget.dart';
 import '../commodity/order_confirm_page.dart';
 
@@ -23,6 +24,7 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
   Map<String,List<int>> commodityCount = {};
   double totalPrice = 0;
   int totalCount = 0;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -37,102 +39,106 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
       appBar: AppBar(
         title: const Text('购物车'),
       ),
-      body: Column(
-        children: [
-          Expanded(child: ListView.builder(
-            itemCount: anchorCommodityData.length,
-            itemBuilder: (BuildContext context, int index) {
-              if(anchorCommodityData.values.toList()[index].isNotEmpty){
-                return _cartItemCard(anchorCommodityData.keys.toList()[index], anchorCommodityData.values.toList()[index]);
-              }
-              return Container();
-            },
-          )),
-          Container(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                //全选
-                Checkbox(
-                    value: anchorCommoditySelectedAll.values.every((element) => element),
-                    onChanged: (v){
-                  anchorCommoditySelectedAll.forEach((key, value) {
-                    anchorCommoditySelectedAll[key] = v!;
-                  });
-                  setState(() {
-                    commoditySelected.forEach((key, value) {
-                      commoditySelected[key] = List.filled(value.length, v!);
+      body: _isLoading ? const Center(child: CircularProgressIndicator(),) : _buildBody(),
+    );
+  }
+
+  Widget _buildBody(){
+    return Column(
+      children: [
+        Expanded(child: ListView.builder(
+          itemCount: anchorCommodityData.length,
+          itemBuilder: (BuildContext context, int index) {
+            if(anchorCommodityData.values.toList()[index].isNotEmpty){
+              return _cartItemCard(anchorCommodityData.keys.toList()[index], anchorCommodityData.values.toList()[index]);
+            }
+            return Container();
+          },
+        )),
+        Container(
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              //全选
+              Checkbox(
+                  value: anchorCommoditySelectedAll.values.every((element) => element),
+                  onChanged: (v){
+                    anchorCommoditySelectedAll.forEach((key, value) {
+                      anchorCommoditySelectedAll[key] = v!;
                     });
-                    _countTotalPrice();
-                    _countTotalCount();
-                  });
-                }),
-                if(totalPrice<10000000)
+                    setState(() {
+                      commoditySelected.forEach((key, value) {
+                        commoditySelected[key] = List.filled(value.length, v!);
+                      });
+                      _countTotalPrice();
+                      _countTotalCount();
+                    });
+                  }),
+              if(totalPrice<10000000)
                 const Text(
                   '全选',
                   style: TextStyle(
                     color: Colors.grey,
                   ),
                 ),
-                Expanded(child: Container(),),
-                if(totalPrice<10000000)
+              Expanded(child: Container(),),
+              if(totalPrice<10000000)
                 Text(
                   '共$totalCount件',
                   style: const TextStyle(
                     color: Colors.grey,
                   ),
                 ),
-                const SizedBox(width: 4,),
-                const Text('合计:',),
-                const Text(
-                  '￥',
-                  style: TextStyle(
-                    color: Colors.orange,
-                    fontSize: 14,
-                  ),
+              const SizedBox(width: 4,),
+              const Text('合计:',),
+              const Text(
+                '￥',
+                style: TextStyle(
+                  color: Colors.orange,
+                  fontSize: 14,
                 ),
-                Text(
-                  totalPrice.toStringAsFixed(2),
-                  style: const TextStyle(
-                    color: Colors.orange,
-                    fontSize: 22,
-                  ),
+              ),
+              Text(
+                totalPrice.toStringAsFixed(2),
+                style: const TextStyle(
+                  color: Colors.orange,
+                  fontSize: 22,
                 ),
-                const SizedBox(width: 12,),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                  ),
-                  onPressed: () {
-                    Map<String,List<Commodity>> selectedAnchorCommodity = {};
-                    Map<String,List<int>> selectedCommodityCount = {};
-                    anchorCommodityData.forEach((key, value) {
-                      List<Commodity> selectedCommodity = [];
-                      List<int> selectedCount = [];
-                      for(int i=0;i<value.length;i++){
-                        if(commoditySelected[key]?[i]??false){
-                          selectedCommodity.add(value[i]);
-                          selectedCount.add(commodityCount[key]?[i]??0);
-                        }
+              ),
+              const SizedBox(width: 12,),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                ),
+                onPressed: () {
+                  Map<String,List<Commodity>> selectedAnchorCommodity = {};
+                  Map<String,List<int>> selectedCommodityCount = {};
+                  anchorCommodityData.forEach((key, value) {
+                    List<Commodity> selectedCommodity = [];
+                    List<int> selectedCount = [];
+                    for(int i=0;i<value.length;i++){
+                      if(commoditySelected[key]?[i]??false){
+                        selectedCommodity.add(value[i]);
+                        selectedCount.add(commodityCount[key]?[i]??0);
                       }
-                      if(selectedCommodity.isNotEmpty){
-                        selectedAnchorCommodity[key] = selectedCommodity;
-                        selectedCommodityCount[key] = selectedCount;
-                      }
-                    });
-                    Get.to(()=>OrderConfirmPage(
-                      anchorCommodityData: selectedAnchorCommodity,
-                      commodityCount: selectedCommodityCount,));
-                  },
-                  child: const Text('结算',style: TextStyle(color: Colors.white),),
-                ),
-                const SizedBox(width: 12,),
-              ],
-            ),
+                    }
+                    if(selectedCommodity.isNotEmpty){
+                      selectedAnchorCommodity[key] = selectedCommodity;
+                      selectedCommodityCount[key] = selectedCount;
+                    }
+                  });
+                  Get.to(()=>OrderConfirmPage(
+                    anchorCommodityData: selectedAnchorCommodity,
+                    commodityCount: selectedCommodityCount,));
+                },
+                child: const Text('结算',style: TextStyle(color: Colors.white),),
+              ),
+              const SizedBox(width: 12,),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -257,59 +263,39 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
   }
 
   Future<void> _fetchData() async {
-    CommoditySpecification commoditySpecification = CommoditySpecification(
-      cid: "1",
-      id: "1",
-      imageUrl: "https://www.zwn2001.space/img/favicon.webp",
-      specification: "Sample Specification",
-      price: 20
-    );
+    setState(() {
+      _isLoading = true;
+    });
+    ResultEntity<Map<Commodity,int>> result = await CommodityAPI.getShoppingCart();
+    print(result);
+    if(result.success){
+      Map<Commodity,int> commodityMap = result.data!;
+      commodityMap.forEach((key, value){
+        String anchorName = key.anchorName;
+        if(anchorCommodityData[anchorName] == null){
+          anchorCommodityData[anchorName] = [];
+        }
+        anchorCommodityData[anchorName]?.add(key);
 
-    Commodity commodity = Commodity(
-      cid: "1",
-      commodityName: "Test Commodity",
-      anchorId: "123",
-      anchorName: "Test Anchor",
-      price: 99.99,
-      freight: 5.0,
-      specification: [commoditySpecification],
-      imageUrl: ["https://www.zwn2001.space/img/favicon.webp"],
-    );
+        anchorCommoditySelectedAll[anchorName] = false;
+        if(commoditySelected[anchorName] == null){
+          commoditySelected[anchorName] = List.empty(growable: true);
+        }
+        commoditySelected[anchorName]?.addAll(List.filled(anchorCommodityData[anchorName]?.length??0, false));
 
-    commodityList = [commodity,commodity];
-    commodity = Commodity(
-      cid: "2",
-      commodityName: "Test Commodity2",
-      anchorId: "123",
-      anchorName: "Test Anchor2",
-      price: 999000,
-      freight: 5.0,
-      specification: [commoditySpecification],
-      imageUrl: ["https://www.zwn2001.space/img/favicon.webp"],
-    );
-    commodityList.add(commodity);
-    for (var element in commodityList) {
-      if(anchorCommodityData[element.anchorName] == null){
-        anchorCommodityData[element.anchorName] = [];
-      }
-      anchorCommodityData[element.anchorName]?.add(element);
+        if(commodityCount[anchorName] == null){
+          commodityCount[anchorName] = List.empty(growable: true);
+        }
+        commodityCount[anchorName]?.add(value);
+      });
+
+      _countTotalPrice();
+      _countTotalCount();
     }
 
-    for (var element in anchorCommodityData.keys) {
-      anchorCommoditySelectedAll[element] = false;
-      if(commoditySelected[element] == null){
-        commoditySelected[element] = List.empty(growable: true);
-      }
-      commoditySelected[element]?.addAll(List.filled(anchorCommodityData[element]?.length??0, false));
-
-      if(commodityCount[element] == null){
-        commodityCount[element] = List.empty(growable: true);
-      }
-      commodityCount[element]?.addAll(List.filled(anchorCommodityData[element]?.length??0, 1));
-    }
-
-    _countTotalPrice();
-    _countTotalCount();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void _countTotalPrice(){
