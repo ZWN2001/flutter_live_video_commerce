@@ -41,15 +41,15 @@ class LiveRoomController extends PlayerController with WidgetsBindingObserver{
 
   Future<void> fetchData() async {
     CommoditySpecification commoditySpecification = CommoditySpecification(
-      cid: "1",
-      id: "1",
+      cid: 1,
+      id: 1,
       imageUrl: "https://www.zwn2001.space/img/favicon.webp",
       specification: "Sample Specification",
       price: 9.99,
     );
 
     Commodity testCommodity = Commodity(
-      cid: "123",
+      cid: 1,
       commodityName: "测试商品",
       anchorId: "456",
       anchorName: "测试主播",

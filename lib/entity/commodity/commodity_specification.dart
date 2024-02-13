@@ -1,6 +1,6 @@
 class CommoditySpecification{
-  String cid;
-  String id;
+  int cid;
+  int id;
   String imageUrl;
   String specification;
   double price;
@@ -15,8 +15,8 @@ class CommoditySpecification{
 
   factory CommoditySpecification.fromJson(Map<String, dynamic> json) {
     return CommoditySpecification(
-      cid: json['cid'] as String,
-      id: json['id'] as String,
+      cid: json['cid'] as int,
+      id: json['id'] as int,
       imageUrl: json['imageUrl'] as String,
       specification: json['specification'] as String,
       price: json['price'] as double,

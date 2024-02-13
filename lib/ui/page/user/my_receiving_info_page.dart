@@ -14,7 +14,7 @@ class MyReceivingInfoPage extends StatefulWidget {
 
 class MyReceivingInfoPageState extends State<MyReceivingInfoPage> {
   List<ReceivingInfo> _receivingInfoList = [];
-  String _defaultReceivingInfoId = '1';
+  int _defaultReceivingInfoId = 0;
 
   @override
   void initState() {
@@ -121,7 +121,7 @@ class MyReceivingInfoPageState extends State<MyReceivingInfoPage> {
 
   Future<void> _fetchData() async {
     ReceivingInfo receivingInfo = ReceivingInfo(
-      id: '1',
+      id: 1,
       name: '张三',
       phone: '12345678901',
       locateArea: '山东省 济南市 历城区 港沟街道 ',

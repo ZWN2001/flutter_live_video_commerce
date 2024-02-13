@@ -2,7 +2,7 @@ import 'package:live_video_commerce/entity/commodity/commodity_specification.dar
 
 class Commodity{
   //商品id
-  String cid;
+  int cid;
   //商品名称
   String commodityName;
   //主播id
@@ -41,7 +41,7 @@ class Commodity{
     List<String> images = (json['imageUrl'] as List).map((item) => item as String).toList();
 
     return Commodity(
-      cid: json['cid'] as String,
+      cid: json['cid'] as int,
       commodityName: json['commodityName'] as String,
       anchorId: json['anchorId'] as String,
       anchorName: json['anchorName'] as String,

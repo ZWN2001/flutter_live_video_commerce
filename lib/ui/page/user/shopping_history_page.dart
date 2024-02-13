@@ -21,15 +21,15 @@ class _ShoppingHistoryPageState extends State<ShoppingHistoryPage> {
   void initState() {
     super.initState();
     CommoditySpecification commoditySpecification = CommoditySpecification(
-      cid: "1",
-      id: "1",
+      cid: 1,
+      id: 1,
       imageUrl: "https://www.zwn2001.space/img/favicon.webp",
       specification: "Sample Specification",
       price: 20
     );
 
     Commodity commodity = Commodity(
-      cid: "1",
+      cid: 1,
       commodityName: "Test Commodity",
       anchorId: "123",
       anchorName: "Test Anchor",
@@ -40,7 +40,7 @@ class _ShoppingHistoryPageState extends State<ShoppingHistoryPage> {
     );
 
     ReceivingInfo receivingInfo = ReceivingInfo(
-      id: "1",
+      id: 1,
       name: "John Doe",
       phone: "1234567890",
       locateArea: "City, State",

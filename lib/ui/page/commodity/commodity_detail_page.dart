@@ -1,10 +1,15 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:get/get.dart';
 import 'package:live_video_commerce/ui/page/commodity/specification_select_page.dart';
-import 'package:live_video_commerce/ui/page/user/shopping_cart_page.dart';
 
+import '../../../api/api.dart';
 import '../../../entity/commodity/commodity.dart';
+import '../../../entity/commodity/shopping_cart_item.dart';
+import '../../../entity/result.dart';
+import '../../../route/route.dart';
+import '../../../state/user_status.dart';
 import 'order_confirm_page.dart';
 
 class CommodityDetailPage extends StatefulWidget {
@@ -176,7 +181,7 @@ class CommodityDetailPageState extends State<CommodityDetailPage> {
                   ],
                 ),
                 onTap: () {
-                  Get.to(() => const ShoppingCartPage());
+                  Get.toNamed(RouteTable.shoppingCart);
                 },
               ),
               const Expanded(
@@ -202,6 +207,9 @@ class CommodityDetailPageState extends State<CommodityDetailPage> {
                     ),
                   ),
                 ),
+                onTap: (){
+                  _addCart(context, _commodity);
+                },
               ),
               InkWell(
                 child: ClipRRect(
@@ -269,6 +277,31 @@ class CommodityDetailPageState extends State<CommodityDetailPage> {
       // widget.commodity.specification = [widget.commodity.specification[index]];
       _selectIndex = index;
       setState(() {});
+    }
+  }
+
+  Future<void> _addCart(BuildContext context, Commodity commodity) async {
+    if(UserStatus.isLogin){
+
+      if(commodity.specification.length > 1 && _selectIndex == null){
+        _selectSpecification();
+      }else if(commodity.specification.length == 1 || _selectIndex != null){
+        ShoppingCartItem item = ShoppingCartItem(
+            uid: UserStatus.user!.uid,
+            cid: commodity.cid,
+            sid: commodity.specification[0].id,
+            counts: 1,
+            addTime: ''
+        );
+        ResultEntity result = await CommodityAPI.shoppingCartAdd(item);
+        if(result.success){
+          BotToast.showText(text: "添加购物车成功");
+        }else{
+          BotToast.showText(text: result.data);
+        }
+      }
+    }else{
+      Get.toNamed(RouteTable.login);
     }
   }
 }

@@ -1,5 +1,5 @@
 class ReceivingInfo{
-  String id;
+  int id;
   String name;
   String phone;
   String locateArea;
@@ -15,7 +15,7 @@ class ReceivingInfo{
 
   factory ReceivingInfo.fromJson(Map<String, dynamic> json) {
     return ReceivingInfo(
-      id: json['id'] as String,
+      id: json['id'] as int,
       name: json['name'] as String,
       phone: json['phone'] as String,
       locateArea: json['locateArea'] as String,

@@ -12,7 +12,7 @@ class SpecificationSelectPage extends StatefulWidget {
 
   const SpecificationSelectPage({
     Key? key,
-    required this.commodity, required this.onCountChanged, required this.selectIndex, required this.selectedCount,
+    required this.commodity, required this.onCountChanged, this.selectIndex, required this.selectedCount,
   }) : super(key: key);
 
   @override
