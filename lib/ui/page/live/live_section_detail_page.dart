@@ -96,9 +96,10 @@ class LiveSectionDetailPageState extends State<LiveSectionDetailPage>{
 
   void _onLoading() async{
     //TODO:load more
-    await Future.delayed(Duration(milliseconds: 1000));
-    if(mounted)
+    await Future.delayed(const Duration(milliseconds: 1000));
+    if(mounted) {
       setState(() {});
+    }
     _refreshController.loadComplete();
   }
 

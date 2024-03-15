@@ -267,7 +267,7 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
       _isLoading = true;
     });
     ResultEntity<Map<Commodity,int>> result = await CommodityAPI.getShoppingCart();
-    print(result);
+
     if(result.success){
       Map<Commodity,int> commodityMap = result.data!;
       commodityMap.forEach((key, value){

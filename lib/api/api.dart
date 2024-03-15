@@ -230,7 +230,7 @@ class CommodityAPI{
   static const String _commodity = '${Server.commodity}/liveRoomCommodity';
   static const String _commodityDetail = '${Server.commodity}/commodityDetail';
   static const String _commodityBrowseHistory = '${Server.commodity}/commodityBrowseHistory';
-  static const String _order = '${Server.commodity}/orders';
+  // static const String _order = '${Server.commodity}/orders';
   static const String _orderDetail = '${Server.commodity}/orderDetail';
   static const String _orderCreate = '${Server.commodity}/orderCreate';
   static const String _orderPay = '${Server.commodity}/orderPay';
@@ -238,6 +238,9 @@ class CommodityAPI{
   static const String _shoppingCartAdd = '${Server.commodity}/shoppingCartAdd';
   static const String _shoppingCart = '${Server.commodity}/shoppingCart';
   static const String _shoppingCartDelete = '${Server.commodity}/shoppingCartDelete';
+  static const String _orderToPay = '${Server.commodity}/orderToPay';
+  static const String _orderToShip = '${Server.commodity}/orderToShip';
+  static const String _orderToComplete = '${Server.commodity}/orderToComplete';
 
   static Future<ResultEntity<List<Commodity>>> getCommodities(int liveRoomId) async {
     try {
@@ -291,24 +294,24 @@ class CommodityAPI{
     }
   }
 
-  static Future<ResultEntity<List<OrderMini>>> getOrders() async {
-    try {
-      Response response = await HttpUtils.get(_order,
-          params: {'uid': UserAPI.user!.uid},
-          options: Options(headers: {'Token': UserAPI.token}));
-      if(!response.valid){
-        return ResultEntity.error();
-      }
-      List<OrderMini> list = [];
-      var data = response.data['data'];
-      for (var item in data) {
-        list.add(OrderMini.fromJson(item));
-      }
-      return ResultEntity.succeed(data: list);
-    } catch (e) {
-      return ResultEntity.error();
-    }
-  }
+  // static Future<ResultEntity<List<OrderMini>>> getOrders() async {
+  //   try {
+  //     Response response = await HttpUtils.get(_order,
+  //         params: {'uid': UserAPI.user!.uid},
+  //         options: Options(headers: {'Token': UserAPI.token}));
+  //     if(!response.valid){
+  //       return ResultEntity.error();
+  //     }
+  //     List<OrderMini> list = [];
+  //     var data = response.data['data'];
+  //     for (var item in data) {
+  //       list.add(OrderMini.fromJson(item));
+  //     }
+  //     return ResultEntity.succeed(data: list);
+  //   } catch (e) {
+  //     return ResultEntity.error();
+  //   }
+  // }
 
   static Future<ResultEntity<Order>> getOrderDetail(int cid) async {
     try {
@@ -400,6 +403,7 @@ class CommodityAPI{
     }
   }
 
+  //TODO
   static Future<ResultEntity> shoppingCartDelete(List<ShoppingCartItem> items) async {
     try {
       Response response = await HttpUtils.post(_shoppingCartDelete,
@@ -414,7 +418,60 @@ class CommodityAPI{
     }
   }
 
+  //_orderToPay
+  static Future<ResultEntity<List<OrderMini>>> orderToPay() async {
+    try {
+      Response response = await HttpUtils.get(_orderToPay,
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(response.valid){
+        final List<OrderMini> orderMiniList = [];
+        final List data = response.data['data'];
+        for (var item in data) {
+          orderMiniList.add(OrderMini.fromJson(item));
+        }
+        return ResultEntity.succeed(data: orderMiniList);
+      }
+      return ResultEntity.error();
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
 
+  static Future<ResultEntity<List<OrderMini>>> orderToShip() async {
+    try {
+      Response response = await HttpUtils.get(_orderToShip,
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(response.valid){
+        final List<OrderMini> orderMiniList = [];
+        final List data = response.data['data'];
+        for (var item in data) {
+          orderMiniList.add(OrderMini.fromJson(item));
+        }
+        return ResultEntity.succeed(data: orderMiniList);
+      }
+      return ResultEntity.error();
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
+
+  static Future<ResultEntity<List<OrderMini>>> orderToComplete() async {
+    try {
+      Response response = await HttpUtils.get(_orderToComplete,
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(response.valid){
+        final List<OrderMini> orderMiniList = [];
+        final List data = response.data['data'];
+        for (var item in data) {
+          orderMiniList.add(OrderMini.fromJson(item));
+        }
+        return ResultEntity.succeed(data: orderMiniList);
+      }
+      return ResultEntity.error();
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
 }
 
 class ReceivingInfoAPI{
