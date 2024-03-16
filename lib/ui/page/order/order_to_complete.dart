@@ -5,15 +5,16 @@ import '../../../api/api.dart';
 import '../../../entity/order/order.dart';
 import '../../../entity/result.dart';
 import '../../../utils/constant_string_utils.dart';
+import '../../widget/my_order_card.dart';
 
-class OrderToComplete extends StatefulWidget {
-  const OrderToComplete({super.key});
+class OrderToCompletePage extends StatefulWidget {
+  const OrderToCompletePage({super.key});
 
   @override
-  OrderToCompleteState createState() => OrderToCompleteState();
+  OrderToCompletePageState createState() => OrderToCompletePageState();
 }
 
-class OrderToCompleteState extends State<OrderToComplete> {
+class OrderToCompletePageState extends State<OrderToCompletePage> {
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
   final List<OrderMini> _orderMiniList = [];
 
@@ -32,11 +33,7 @@ class OrderToCompleteState extends State<OrderToComplete> {
         controller: _refreshController,
         onRefresh: _onRefresh,
         onLoading: _onLoading,
-        child:  ListView(
-          children: [
-
-          ],
-        ),
+        child:  ListView.builder(itemBuilder: (context, index) => MyOrderCard(order: _orderMiniList[index]), itemCount: _orderMiniList.length,),
       ),
     );
   }

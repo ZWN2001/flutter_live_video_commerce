@@ -5,15 +5,16 @@ import '../../../api/api.dart';
 import '../../../entity/order/order.dart';
 import '../../../entity/result.dart';
 import '../../../utils/constant_string_utils.dart';
+import '../../widget/my_order_card.dart';
 
-class OrderToPay extends StatefulWidget {
-  const OrderToPay({super.key});
+class OrderToPayPage extends StatefulWidget {
+  const OrderToPayPage({super.key});
 
   @override
-  OrderToPayState createState() => OrderToPayState();
+  OrderToPayPageState createState() => OrderToPayPageState();
 }
 
-class OrderToPayState extends State<OrderToPay> {
+class OrderToPayPageState extends State<OrderToPayPage> {
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
   final List<OrderMini> _orderMiniList = [];
 
@@ -32,11 +33,7 @@ class OrderToPayState extends State<OrderToPay> {
         controller: _refreshController,
         onRefresh: _onRefresh,
         onLoading: _onLoading,
-        child:  ListView(
-          children: [
-
-          ],
-        ),
+        child:  ListView.builder(itemBuilder: (context, index) => MyOrderCard(order: _orderMiniList[index]), itemCount: _orderMiniList.length,),
       ),
     );
   }

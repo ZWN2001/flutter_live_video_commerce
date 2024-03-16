@@ -230,7 +230,7 @@ class CommodityAPI{
   static const String _commodity = '${Server.commodity}/liveRoomCommodity';
   static const String _commodityDetail = '${Server.commodity}/commodityDetail';
   static const String _commodityBrowseHistory = '${Server.commodity}/commodityBrowseHistory';
-  // static const String _order = '${Server.commodity}/orders';
+  static const String _order = '${Server.commodity}/orders';
   static const String _orderDetail = '${Server.commodity}/orderDetail';
   static const String _orderCreate = '${Server.commodity}/orderCreate';
   static const String _orderPay = '${Server.commodity}/orderPay';
@@ -294,24 +294,24 @@ class CommodityAPI{
     }
   }
 
-  // static Future<ResultEntity<List<OrderMini>>> getOrders() async {
-  //   try {
-  //     Response response = await HttpUtils.get(_order,
-  //         params: {'uid': UserAPI.user!.uid},
-  //         options: Options(headers: {'Token': UserAPI.token}));
-  //     if(!response.valid){
-  //       return ResultEntity.error();
-  //     }
-  //     List<OrderMini> list = [];
-  //     var data = response.data['data'];
-  //     for (var item in data) {
-  //       list.add(OrderMini.fromJson(item));
-  //     }
-  //     return ResultEntity.succeed(data: list);
-  //   } catch (e) {
-  //     return ResultEntity.error();
-  //   }
-  // }
+  static Future<ResultEntity<List<OrderMini>>> getOrders() async {
+    try {
+      Response response = await HttpUtils.get(_order,
+          params: {'uid': UserAPI.user!.uid},
+          options: Options(headers: {'Token': UserAPI.token}));
+      if(!response.valid){
+        return ResultEntity.error();
+      }
+      List<OrderMini> list = [];
+      var data = response.data['data'];
+      for (var item in data) {
+        list.add(OrderMini.fromJson(item));
+      }
+      return ResultEntity.succeed(data: list);
+    } catch (e) {
+      return ResultEntity.error();
+    }
+  }
 
   static Future<ResultEntity<Order>> getOrderDetail(int cid) async {
     try {
@@ -398,7 +398,6 @@ class CommodityAPI{
       });
       return ResultEntity.succeed(data: map);
     } catch (e) {
-      print(e);
       return ResultEntity.error();
     }
   }

@@ -4,8 +4,6 @@ import 'package:get/get_navigation/get_navigation.dart';
 import 'package:live_video_commerce/state/user_status.dart';
 import 'package:live_video_commerce/ui/page/functions_page/login_page.dart';
 import 'package:live_video_commerce/ui/page/user/my_receiving_info_page.dart';
-import 'package:live_video_commerce/ui/page/user/shopping_cart_page.dart';
-import 'package:live_video_commerce/ui/page/user/shopping_history_page.dart';
 
 import '../../../api/api.dart';
 import '../../../entity/order/order.dart';
@@ -266,7 +264,7 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin,
               TextButton(
                 child: const Text('查看全部 >'),
                 onPressed: () {
-                  Get.to(()=>const ShoppingHistoryPage());
+                  Get.toNamed(RouteTable.orders);
                   //TODO
                 },
               ),
@@ -283,7 +281,7 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin,
                   ],
                 ),
                 onPressed: () {
-                  //TODO
+                  Get.toNamed(RouteTable.orderToPay);
                 },
               ),),
               Expanded(child: TextButton(
@@ -294,7 +292,7 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin,
                   ],
                 ),
                 onPressed: () {
-                  //TODO
+                  Get.toNamed(RouteTable.orderToShip);
                 },
               ),),
               Expanded(child: TextButton(
@@ -305,7 +303,7 @@ class UserPageState extends State<UserPage> with SingleTickerProviderStateMixin,
                   ],
                 ),
                 onPressed: () {
-                  //TODO
+                  Get.toNamed(RouteTable.orderToComplete);
                 },
               ),),
               Expanded(child: TextButton(

@@ -19,7 +19,7 @@ class LiveSectionPageState extends State<LiveSectionPage> with TickerProviderSta
   bool _loading = true;
 
   List<Section> _sections = [];
-  late final TabController _tabController;
+  late TabController _tabController;
 
   @override
   void initState() {

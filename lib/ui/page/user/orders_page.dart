@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:live_video_commerce/entity/order/order.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 import '../../../api/api.dart';
-import '../../../entity/order/order.dart';
 import '../../../entity/result.dart';
 import '../../../utils/constant_string_utils.dart';
 import '../../widget/my_order_card.dart';
 
-class OrderToShipPage extends StatefulWidget {
-  const OrderToShipPage({super.key});
+
+class OrdersPage extends StatefulWidget {
+  const OrdersPage({super.key});
 
   @override
-  OrderToShipPageState createState() => OrderToShipPageState();
+  State<OrdersPage> createState() => OrdersPageState();
 }
 
-class OrderToShipPageState extends State<OrderToShipPage> {
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
-  final List<OrderMini> _orderMiniList = [];
+class OrdersPageState extends State<OrdersPage> {
+  List<OrderMini> orderList = [];
+  final RefreshController _refreshController = RefreshController(
+      initialRefresh: false);
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('待付款订单'),
+        title: const Text("全部订单"),
       ),
       body: SmartRefresher(
         enablePullDown: true,
@@ -33,34 +41,36 @@ class OrderToShipPageState extends State<OrderToShipPage> {
         controller: _refreshController,
         onRefresh: _onRefresh,
         onLoading: _onLoading,
-        child:  ListView.builder(itemBuilder: (context, index) => MyOrderCard(order: _orderMiniList[index]), itemCount: _orderMiniList.length,),
+        child: ListView.builder(
+          itemBuilder: (context, index) => MyOrderCard(order: orderList[index]),
+          itemCount: orderList.length,),
       ),
     );
   }
 
-  Future<void> _fetchData() async{
-    ResultEntity<List<OrderMini>> result = await CommodityAPI.orderToShip();
-    if(result.success){
-      _orderMiniList.addAll(result.data!);
-      if(mounted) {
+  _fetchData() async {
+    ResultEntity<List<OrderMini>> result = await CommodityAPI.getOrders();
+    if (result.success) {
+      orderList.addAll(result.data!);
+      if (mounted) {
         setState(() {});
       }
     }
   }
 
-  void _onRefresh() async{
-    _orderMiniList.clear();
+  void _onRefresh() async {
+    orderList.clear();
     await _fetchData();
     _refreshController.refreshCompleted();
   }
 
-  void _onLoading() async{
+  void _onLoading() async {
     //TODO:load more
     await Future.delayed(const Duration(milliseconds: 1000));
-    if(mounted) {
+    if (mounted) {
       setState(() {});
     }
     _refreshController.loadComplete();
   }
-}
 
+}
