@@ -1,10 +1,17 @@
+import 'dart:convert';
+
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:live_video_commerce/api/api.dart';
 import 'package:live_video_commerce/entity/commodity/receiving_info.dart';
+
+import '../../../entity/result.dart';
 
 class EditReceivingInfoPage extends StatefulWidget {
   final ReceivingInfo? receivingInfo;
   final bool isDefaultReceivingInfo;
-  const EditReceivingInfoPage({super.key, this.receivingInfo, required this.isDefaultReceivingInfo});
+  final VoidCallback onEditSuccess;
+  const EditReceivingInfoPage({super.key, this.receivingInfo, required this.isDefaultReceivingInfo, required this.onEditSuccess});
 
   @override
   EditReceivingInfoPageState createState() => EditReceivingInfoPageState();
@@ -14,6 +21,7 @@ class EditReceivingInfoPageState extends State<EditReceivingInfoPage> {
   ReceivingInfo? _receivingInfo;
   late bool _isDefaultReceivingInfo;
   bool groupValue = false;
+  bool isNew = false;
 
   @override
   void initState() {
@@ -23,6 +31,10 @@ class EditReceivingInfoPageState extends State<EditReceivingInfoPage> {
     if(_isDefaultReceivingInfo){
       groupValue = true;
     }
+    if(_receivingInfo == null){
+      isNew = true;
+      _receivingInfo = ReceivingInfo.empty();
+    }
   }
 
 
@@ -30,7 +42,7 @@ class EditReceivingInfoPageState extends State<EditReceivingInfoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _receivingInfo == null ? const Text('新增收货信息') : const Text('编辑收货信息'),
+        title: isNew ? const Text('新增收货信息') : const Text('编辑收货信息'),
       ),
       body: Column(
         children: [
@@ -50,7 +62,7 @@ class EditReceivingInfoPageState extends State<EditReceivingInfoPage> {
                       Expanded(
                         child: TextField(
                           autofocus: true,
-                          controller: TextEditingController(text: _receivingInfo?.name),
+                          controller: TextEditingController(text: _receivingInfo?.receiver),
                           style: const TextStyle(
                             color: Color(0xff333333),
                             fontSize: 14.0,
@@ -66,7 +78,7 @@ class EditReceivingInfoPageState extends State<EditReceivingInfoPage> {
                             hintText: '收件人姓名',
                           ),
                           onChanged: (value) {
-                            _receivingInfo?.name = value;
+                            _receivingInfo?.receiver = value;
                           },
                         ),
                       )
@@ -108,13 +120,19 @@ class EditReceivingInfoPageState extends State<EditReceivingInfoPage> {
                       const SizedBox(width: 8,),
                       Expanded(
                         child: TextField(
-                          controller: TextEditingController(text: _receivingInfo?.detailedAddress),
-                          decoration: const InputDecoration(
+                          controller: TextEditingController(text: _receivingInfo?.locateArea),
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+                            fillColor: Colors.grey[200],
+                            filled: true,
+                            border: const OutlineInputBorder(borderSide: BorderSide.none),
+                            enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blue, width: 1)),
                             hintText: '省市区',
-                            border: InputBorder.none,
                           ),
                           onChanged: (value) {
-                            _receivingInfo?.detailedAddress = value;
+                            _receivingInfo?.locateArea = value;
                           },
                         ),
                       )
@@ -127,6 +145,7 @@ class EditReceivingInfoPageState extends State<EditReceivingInfoPage> {
                       const SizedBox(width: 8,),
                       Expanded(
                         child: TextField(
+                          controller: TextEditingController(text: _receivingInfo?.detailedAddress),
                           maxLines: 4,
                           style: const TextStyle(
                             color: Color(0xff333333),
@@ -143,7 +162,7 @@ class EditReceivingInfoPageState extends State<EditReceivingInfoPage> {
                             hintText: '详细地址',
                           ),
                           onChanged: (value) {
-                            // _receivingInfo?.detailAddress = value;
+                            _receivingInfo?.detailedAddress = value;
                           },
                         ),
                       )
@@ -177,8 +196,24 @@ class EditReceivingInfoPageState extends State<EditReceivingInfoPage> {
                   const SizedBox(width: 24,),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-
+                      onPressed: () async {
+                        if(isNew){
+                          _receivingInfo!.uid = UserAPI.user!.uid;
+                          ResultEntity res = await ReceivingInfoAPI.receivingInfoAdd(_receivingInfo!);
+                          BotToast.showText(text: res.message);
+                          if(res.success && context.mounted){
+                            widget.onEditSuccess();
+                            Navigator.pop(context, true);
+                          }
+                        }else {
+                          // 编辑
+                          ResultEntity res = await ReceivingInfoAPI.receivingInfoUpdate(_receivingInfo!);
+                          BotToast.showText(text: res.message);
+                          if(res.success && context.mounted){
+                            widget.onEditSuccess();
+                            Navigator.pop(context, true);
+                          }
+                        }
                       },
                       child: const Text('保存'),
                     ),

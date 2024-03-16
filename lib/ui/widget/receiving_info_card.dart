@@ -24,7 +24,7 @@ class ReceivingInfoCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        receivingInfo.name,
+                        receivingInfo.receiver,
                         style: const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,

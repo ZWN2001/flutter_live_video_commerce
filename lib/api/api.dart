@@ -330,7 +330,7 @@ class CommodityAPI{
   static Future<ResultEntity> orderCreate(Order order) async {
     try {
       Response response = await HttpUtils.post(_orderCreate,
-          data: {'orderCommodityInfoJson': jsonEncode(order.toJson())},
+          data: FormData.fromMap({'orderCommodityInfoJson': jsonEncode(order.toJson())}),
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
@@ -344,7 +344,7 @@ class CommodityAPI{
   static Future<ResultEntity> orderPay(int oid) async {
     try {
       Response response = await HttpUtils.post(_orderPay,
-          data: {'oid': oid},
+          data: FormData.fromMap({'oid': oid}),
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
@@ -358,7 +358,7 @@ class CommodityAPI{
   static Future<ResultEntity> orderCancel(int oid) async {
     try {
       Response response = await HttpUtils.post(_orderCancel,
-          data: {'oid': oid},
+          data: FormData.fromMap({'oid': oid}),
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
@@ -372,7 +372,7 @@ class CommodityAPI{
   static Future<ResultEntity> shoppingCartAdd(ShoppingCartItem shoppingCartItem) async {
     try {
       Response response = await HttpUtils.post(_shoppingCartAdd,
-          data: {'shoppingCartItemJsonString': jsonEncode(shoppingCartItem.toJson())},
+          data: FormData.fromMap({'shoppingCartItemJson': jsonEncode(shoppingCartItem.toJson())}),
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
@@ -406,7 +406,7 @@ class CommodityAPI{
   static Future<ResultEntity> shoppingCartDelete(List<ShoppingCartItem> items) async {
     try {
       Response response = await HttpUtils.post(_shoppingCartDelete,
-          data: {'listJsonString': jsonEncode(items.map((e) => e.toJson()).toList())},
+          data: FormData.fromMap({'listJsonString': jsonEncode(items.map((e) => e.toJson()).toList())}),
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
@@ -483,7 +483,6 @@ class ReceivingInfoAPI{
   static Future<ResultEntity<List<ReceivingInfo>>> getReceivingInfos() async {
     try {
       Response response = await HttpUtils.get(_receivingInfo,
-          // params: {'uid': UserAPI.user!.uid},
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
@@ -495,6 +494,7 @@ class ReceivingInfoAPI{
       }
       return ResultEntity.succeed(data: list);
     } catch (e) {
+      print(e);
       return ResultEntity.error();
     }
   }
@@ -515,8 +515,9 @@ class ReceivingInfoAPI{
 
   static Future<ResultEntity> receivingInfoAdd(ReceivingInfo receivingInfo) async {
     try {
+      String s = jsonEncode(receivingInfo.toJson());
       Response response = await HttpUtils.post(_receivingInfoAdd,
-          data: {'receivingInfoJson': jsonEncode(receivingInfo.toJson())},
+          data: FormData.fromMap({'receivingInfoJson': s}),
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
@@ -530,7 +531,7 @@ class ReceivingInfoAPI{
   static Future<ResultEntity> receivingInfoUpdate(ReceivingInfo receivingInfo) async {
     try {
       Response response = await HttpUtils.post(_receivingInfoUpdate,
-          data: {'receivingInfoJson': jsonEncode(receivingInfo.toJson())},
+          data: FormData.fromMap({'receivingInfoJson': jsonEncode(receivingInfo.toJson())}),
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
@@ -544,7 +545,7 @@ class ReceivingInfoAPI{
   static Future<ResultEntity> receivingInfoDelete(int id) async {
     try {
       Response response = await HttpUtils.post(_receivingInfoDelete,
-          data: {'id': id},
+          data: FormData.fromMap({'id': id}),
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();

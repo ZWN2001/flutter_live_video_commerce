@@ -3,7 +3,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:live_video_commerce/ui/page/user/edit_receiving_info_page.dart';
 
+import '../../../api/api.dart';
 import '../../../entity/commodity/receiving_info.dart';
+import '../../../entity/result.dart';
 
 class MyReceivingInfoPage extends StatefulWidget {
   const MyReceivingInfoPage({super.key});
@@ -13,7 +15,7 @@ class MyReceivingInfoPage extends StatefulWidget {
 }
 
 class MyReceivingInfoPageState extends State<MyReceivingInfoPage> {
-  List<ReceivingInfo> _receivingInfoList = [];
+  final List<ReceivingInfo> _receivingInfoList = [];
   int _defaultReceivingInfoId = 0;
 
   @override
@@ -48,7 +50,13 @@ class MyReceivingInfoPageState extends State<MyReceivingInfoPage> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        Get.to(()=>const EditReceivingInfoPage(isDefaultReceivingInfo: false,));
+                        Get.to(()=>EditReceivingInfoPage(
+                          receivingInfo: null,
+                          isDefaultReceivingInfo: false,
+                          onEditSuccess: (){
+                            _fetchData();
+                          },
+                        ));
                       },
                       child: const Text('+  新增收货信息'),
                     ),
@@ -95,12 +103,12 @@ class MyReceivingInfoPageState extends State<MyReceivingInfoPage> {
       child: ListTile(
         contentPadding: padding,
         leading: CircleAvatar(
-          child: Text(receivingInfo.name[0]),
+          child: Text(receivingInfo.receiver[0]),
         ),
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(receivingInfo.name,style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+            Text(receivingInfo.receiver,style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
             const SizedBox(width: 8,),
             Text(receivingInfo.phone),
             const SizedBox(width: 8,),
@@ -112,7 +120,13 @@ class MyReceivingInfoPageState extends State<MyReceivingInfoPage> {
         trailing: IconButton(
           icon: const Icon(Icons.edit),
           onPressed: () {
-            Get.to(()=>EditReceivingInfoPage(receivingInfo: receivingInfo,isDefaultReceivingInfo: _defaultReceivingInfoId == receivingInfo.id,));
+            Get.to(()=>EditReceivingInfoPage(
+              receivingInfo: receivingInfo,
+              isDefaultReceivingInfo: _defaultReceivingInfoId == receivingInfo.id,
+              onEditSuccess: (){
+                _fetchData();
+              },
+            ));
           },
         ),
       )
@@ -120,13 +134,12 @@ class MyReceivingInfoPageState extends State<MyReceivingInfoPage> {
   }
 
   Future<void> _fetchData() async {
-    ReceivingInfo receivingInfo = ReceivingInfo(
-      id: 1,
-      name: '张三',
-      phone: '12345678901',
-      locateArea: '山东省 济南市 历城区 港沟街道 ',
-      detailedAddress: '舜华路1500号山东大学软件园校区教学楼',
-    );
-    _receivingInfoList = [receivingInfo,receivingInfo,receivingInfo,receivingInfo];
+    ResultEntity<List<ReceivingInfo>> result = await ReceivingInfoAPI.getReceivingInfos();
+    if(result.success){
+      _receivingInfoList.addAll(result.data!);
+      if(mounted) {
+        setState(() {});
+      }
+    }
   }
 }
