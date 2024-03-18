@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:live_video_commerce/entity/order/order.dart';
 
-//TODO:index都需要改
+import '../../utils/constant_string_utils.dart';
+
 class MyOrderCard extends StatelessWidget {
   final OrderMini order;
   const MyOrderCard({Key? key, required this.order}) : super(key: key);
@@ -38,7 +39,7 @@ class MyOrderCard extends StatelessWidget {
           ),
         ),
         Text(
-          order.orderStatus.toString(),
+          "订单状态：${ConstantStringUtils.orderStatus[order.orderStatus]}",
           style: const TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,

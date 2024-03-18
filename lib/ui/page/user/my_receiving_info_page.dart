@@ -136,6 +136,7 @@ class MyReceivingInfoPageState extends State<MyReceivingInfoPage> {
   Future<void> _fetchData() async {
     ResultEntity<List<ReceivingInfo>> result = await ReceivingInfoAPI.getReceivingInfos();
     if(result.success){
+      _receivingInfoList.clear();
       _receivingInfoList.addAll(result.data!);
       if(mounted) {
         setState(() {});

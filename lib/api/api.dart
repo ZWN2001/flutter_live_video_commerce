@@ -299,6 +299,7 @@ class CommodityAPI{
       Response response = await HttpUtils.get(_order,
           params: {'uid': UserAPI.user!.uid},
           options: Options(headers: {'Token': UserAPI.token}));
+      print(response);
       if(!response.valid){
         return ResultEntity.error();
       }
@@ -440,6 +441,7 @@ class CommodityAPI{
     try {
       Response response = await HttpUtils.get(_orderToShip,
           options: Options(headers: {'Token': UserAPI.token}));
+      print(response);
       if(response.valid){
         final List<OrderMini> orderMiniList = [];
         final List data = response.data['data'];

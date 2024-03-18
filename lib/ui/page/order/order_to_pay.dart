@@ -19,6 +19,12 @@ class OrderToPayPageState extends State<OrderToPayPage> {
   final List<OrderMini> _orderMiniList = [];
 
   @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

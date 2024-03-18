@@ -48,11 +48,11 @@ class OrderMini{
 
   factory OrderMini.fromJson(Map<String, dynamic> json) {
     return OrderMini(
-      oid: json['orderId'] as String,
+      oid: json['oid'] as String,
       commodity: Commodity.fromJson(json['commodity'] as Map<String, dynamic>),
       quantity: json['quantity'] as int,
       totalPrice: json['totalPrice'] as double,
-      orderStatus: json['status'] as int,
+      orderStatus: json['orderStatus'] as int,
     );
   }
 

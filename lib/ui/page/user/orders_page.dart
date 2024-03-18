@@ -51,6 +51,7 @@ class OrdersPageState extends State<OrdersPage> {
   _fetchData() async {
     ResultEntity<List<OrderMini>> result = await CommodityAPI.getOrders();
     if (result.success) {
+      orderList.clear();
       orderList.addAll(result.data!);
       if (mounted) {
         setState(() {});
@@ -59,7 +60,6 @@ class OrdersPageState extends State<OrdersPage> {
   }
 
   void _onRefresh() async {
-    orderList.clear();
     await _fetchData();
     _refreshController.refreshCompleted();
   }

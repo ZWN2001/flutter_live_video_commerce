@@ -30,23 +30,29 @@ class Commodity{
   });
 
   factory Commodity.fromJson(Map<String, dynamic> json) {
-    List<CommoditySpecification> specification = (json['specification'] as List<dynamic>).map((e) => CommoditySpecification.fromJson(e)).toList();
-    //price为specification的最小值
-    double price = specification[0].price;
-    for (var element in specification) {
-      if(element.price < price){
-        price = element.price;
+    List<CommoditySpecification> specification = [];
+    double price = 0.0;
+    if(json['specification']!=null){
+      specification = (json['specification'] as List<dynamic>).map((e) => CommoditySpecification.fromJson(e)).toList();
+      //price为specification的最小值
+      price = specification[0].price;
+      for (var element in specification) {
+        if(element.price < price){
+          price = element.price;
+        }
       }
     }
+
+
     List<String> images = (json['imageUrl'] as List).map((item) => item as String).toList();
 
     return Commodity(
-      cid: json['cid'] as int,
-      commodityName: json['commodityName'] as String,
-      anchorId: json['anchorId'] as String,
-      anchorName: json['anchorName'] as String,
+      cid: json['cid'] ?? 0,
+      commodityName: json['commodityName']  ?? '',
+      anchorId: json['anchorId'] ?? '',
+      anchorName: json['anchorName'] ?? '',
       price: price,
-      freight: json['freight'] as double,
+      freight: json['freight'] ?? 0.0,
       specification: specification,
       imageUrl: images,
     );
