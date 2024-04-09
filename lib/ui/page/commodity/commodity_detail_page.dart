@@ -8,6 +8,7 @@ import '../../../api/api.dart';
 import '../../../entity/commodity/commodity.dart';
 import '../../../entity/commodity/shopping_cart_item.dart';
 import '../../../entity/result.dart';
+import '../../../entity/user.dart';
 import '../../../route/route.dart';
 import '../../../state/user_status.dart';
 import 'order_confirm_page.dart';
@@ -231,15 +232,18 @@ class CommodityDetailPageState extends State<CommodityDetailPage> {
                 ),
                 onTap: () {
                   if (_selectIndex != null) {
-                    Commodity commodity = widget.commodity.clone();
+                    Commodity commodity = _commodity.clone();
                     commodity.specification = [
                       commodity.specification[_selectIndex!]
                     ];
-                    Map<String, List<Commodity>> anchorCommodityData = {
-                      commodity.anchorName: [commodity],
+                    User u = User.empty();
+                    u.uid = commodity.anchorId;
+                    u.nickname = commodity.anchorName;
+                    Map<User, List<Commodity>> anchorCommodityData = {
+                      u: [commodity],
                     };
-                    Map<String, List<int>> commodityCount = {
-                      commodity.anchorName: [_selectedCount],
+                    Map<User, List<int>> commodityCount = {
+                      u: [_selectedCount],
                     };
                     Get.to(() => OrderConfirmPage(
                           anchorCommodityData: anchorCommodityData,

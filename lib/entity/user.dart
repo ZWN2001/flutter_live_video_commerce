@@ -29,9 +29,26 @@ class User {
     };
   }
 
+  static User empty() {
+    return User(
+      uid: '',
+      nickname: '',
+      password: '',
+      avatar: '',
+    );
+  }
+
   @override
   String toString() {
     return 'User{uid: $uid, nickname: $nickname, password: $password, avatar: $avatar}';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is User && runtimeType == other.runtimeType && uid == other.uid;
+
+  @override
+  int get hashCode => uid.hashCode;
 }
 

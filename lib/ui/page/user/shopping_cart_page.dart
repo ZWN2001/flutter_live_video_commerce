@@ -5,6 +5,7 @@ import 'package:live_video_commerce/api/api.dart';
 import 'package:live_video_commerce/entity/result.dart';
 
 import '../../../entity/commodity/commodity.dart';
+import '../../../entity/user.dart';
 import '../../widget/item_calculate_widget.dart';
 import '../commodity/order_confirm_page.dart';
 
@@ -18,10 +19,10 @@ class ShoppingCartPage extends StatefulWidget {
 class ShoppingCartPageState extends State<ShoppingCartPage>{
   ///还是觉得这段代码可读性不太好，抽象成一个类，然后把数据和方法都放在类里面，可能看起来会更清晰
   List<Commodity> commodityList = [];///不要使用该数据作为UI数据源
-  Map<String,List<Commodity>> anchorCommodityData = {};
-  Map<String,bool> anchorCommoditySelectedAll = {};
-  Map<String,List<bool>> commoditySelected = {};
-  Map<String,List<int>> commodityCount = {};
+  Map<User,List<Commodity>> anchorCommodityData = {};
+  Map<User,bool> anchorCommoditySelectedAll = {};
+  Map<User,List<bool>> commoditySelected = {};
+  Map<User,List<int>> commodityCount = {};
   double totalPrice = 0;
   int totalCount = 0;
   bool _isLoading = false;
@@ -112,8 +113,8 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
                   backgroundColor: Colors.orange,
                 ),
                 onPressed: () {
-                  Map<String,List<Commodity>> selectedAnchorCommodity = {};
-                  Map<String,List<int>> selectedCommodityCount = {};
+                  Map<User,List<Commodity>> selectedAnchorCommodity = {};
+                  Map<User,List<int>> selectedCommodityCount = {};
                   anchorCommodityData.forEach((key, value) {
                     List<Commodity> selectedCommodity = [];
                     List<int> selectedCount = [];
@@ -142,25 +143,25 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
     );
   }
 
-  Widget _cartItemCard(String anchorName, List<Commodity> list) {
+  Widget _cartItemCard(User user, List<Commodity> list) {
     return Card(
       child: Column(
         children: [
           Row(
             children: [
               Radio(value: true,
-                  groupValue: anchorCommoditySelectedAll[anchorName],
+                  groupValue: anchorCommoditySelectedAll[user],
                   onChanged: (v){
-                    anchorCommoditySelectedAll[anchorName] = v!;
+                    anchorCommoditySelectedAll[user] = v!;
                     setState(() {
-                      commoditySelected[anchorName] = List.filled(list.length, v);
+                      commoditySelected[user] = List.filled(list.length, v);
                       _countTotalPrice();
                       _countTotalCount();
                     });
                   }
               ),
               const SizedBox(width: 16,),
-              Text(anchorName),
+              Text(user.nickname),
             ],
           ),
           ListView.builder(
@@ -175,7 +176,7 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
                     SlidableAction(
                       onPressed: (c){
                         //删除
-                        anchorCommodityData[anchorName]!.removeAt(index);
+                        anchorCommodityData[user]!.removeAt(index);
                         _countTotalPrice();
                         _countTotalCount();
                         _onListChanged();
@@ -188,7 +189,7 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
                     ),
                   ],
                 ),
-                child: _commodityItem(list[index],index),
+                child: _commodityItem(user,list[index],index),
               );
             },
           ),
@@ -197,20 +198,20 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
     );
   }
 
-  Widget _commodityItem(Commodity commodity,int index) {
+  Widget _commodityItem(User user,Commodity commodity,int index) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16, right: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Checkbox(
-              value: commoditySelected[commodity.anchorName]?[index],
+              value: commoditySelected[user]?[index],
               onChanged: (v){
-            commoditySelected[commodity.anchorName]?[index] = v!;
+            commoditySelected[user]?[index] = v!;
             _countTotalPrice();
             _countTotalCount();
             //commoditySelected[commodity.anchorName]若全为true，则anchorCommoditySelectedAll[commodity.anchorName]为true
-            anchorCommoditySelectedAll[commodity.anchorName] = commoditySelected[commodity.anchorName]!.every((element) => element);
+            anchorCommoditySelectedAll[user] = commoditySelected[user]!.every((element) => element);
             setState(() {});
           }
           ),
@@ -246,11 +247,11 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
               ),
 
               ItemCalculateWidget(
-                count: commodityCount[commodity.anchorName]![index],
+                count: commodityCount[user]![index],
                 mainAxisAlignment: MainAxisAlignment.end,
                 size: 26,
                 onCountChanged: (int value) {
-                  commodityCount[commodity.anchorName]![index] += value;
+                  commodityCount[user]![index] += value;
                   _countTotalPrice();
                   _countTotalCount();
                   setState(() {});
@@ -271,22 +272,24 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
     if(result.success){
       Map<Commodity,int> commodityMap = result.data!;
       commodityMap.forEach((key, value){
-        String anchorName = key.anchorName;
-        if(anchorCommodityData[anchorName] == null){
-          anchorCommodityData[anchorName] = [];
+        User user = User.empty();
+        user.uid = key.anchorId;
+        user.nickname = key.anchorName;
+        if(anchorCommodityData[user] == null){
+          anchorCommodityData[user] = [];
         }
-        anchorCommodityData[anchorName]?.add(key);
+        anchorCommodityData[user]?.add(key);
 
-        anchorCommoditySelectedAll[anchorName] = false;
-        if(commoditySelected[anchorName] == null){
-          commoditySelected[anchorName] = List.empty(growable: true);
+        anchorCommoditySelectedAll[user] = false;
+        if(commoditySelected[user] == null){
+          commoditySelected[user] = List.empty(growable: true);
         }
-        commoditySelected[anchorName]?.addAll(List.filled(anchorCommodityData[anchorName]?.length??0, false));
+        commoditySelected[user]?.addAll(List.filled(anchorCommodityData[user]?.length??0, false));
 
-        if(commodityCount[anchorName] == null){
-          commodityCount[anchorName] = List.empty(growable: true);
+        if(commodityCount[user] == null){
+          commodityCount[user] = List.empty(growable: true);
         }
-        commodityCount[anchorName]?.add(value);
+        commodityCount[user]?.add(value);
       });
 
       _countTotalPrice();
@@ -323,7 +326,7 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
   }
 
   void _onListChanged(){
-    List<String> keysToRemove = [];
+    List<User> keysToRemove = [];
 
     anchorCommodityData.forEach((key, value) {
       if (value.isEmpty) {
