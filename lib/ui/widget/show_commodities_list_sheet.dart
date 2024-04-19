@@ -28,7 +28,7 @@ class ShowCommoditiesListSheet {
               Row(
                 children: [
                   const SizedBox(width: 12,),
-                  Text("${commodities[0].anchorName}的商品列表", textAlign: TextAlign.center,),
+                  const Text("商品列表", textAlign: TextAlign.center,),
                   const Expanded(child: SizedBox.shrink(),),
                   InkWell(
                     child: const Column(

@@ -1,5 +1,7 @@
 import 'package:live_video_commerce/entity/commodity/commodity_specification.dart';
 
+import '../../api/server.dart';
+
 class Commodity{
   //商品id
   int cid;
@@ -44,7 +46,7 @@ class Commodity{
     }
 
 
-    List<String> images = (json['imageUrl'] as List).map((item) => item as String).toList();
+    List<String> images = (json['imageUrl'] as List).map((item) => (item as String).replaceAll("localhost", Server.hostIp)).toList();
 
     return Commodity(
       cid: json['cid'] ?? 0,

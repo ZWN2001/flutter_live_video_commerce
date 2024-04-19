@@ -17,7 +17,7 @@ class LiveRoomController extends PlayerController with WidgetsBindingObserver{
 
   LiveRoom liveRoom = LiveRoom.empty();
 
-  List<Commodity> commodities = [];
+  final List<Commodity> commodities = [];
 
   final TextEditingController barrageEditingController =
   TextEditingController();
@@ -40,26 +40,6 @@ class LiveRoomController extends PlayerController with WidgetsBindingObserver{
   }
 
   Future<void> fetchData() async {
-    CommoditySpecification commoditySpecification = CommoditySpecification(
-      cid: 1,
-      id: 1,
-      imageUrl: "https://www.zwn2001.space/img/favicon.webp",
-      specification: "Sample Specification",
-      price: 9.99,
-    );
-
-    Commodity testCommodity = Commodity(
-      cid: 1,
-      commodityName: "测试商品",
-      anchorId: "456",
-      anchorName: "测试主播",
-      price: 9.99,
-      freight: 2.99,
-      specification: [commoditySpecification,commoditySpecification],
-      imageUrl: ["https://www.zwn2001.space/img/favicon.webp"],
-    );
-
-    commodities=[testCommodity,testCommodity,testCommodity];
     int rid = Get.arguments;
 
     ResultEntity<LiveRoom> result = await LiveRoomAPI.getLiveRoomInfo(rid);
@@ -73,9 +53,10 @@ class LiveRoomController extends PlayerController with WidgetsBindingObserver{
     }
 
     ResultEntity<List<Commodity>> commodityResult = await CommodityAPI.getCommodities(rid);
-    print(commodityResult.data);
     if(commodityResult.success) {
-      commodities = commodityResult.data!;
+      commodities.clear();
+      commodities.addAll(commodityResult.data!);
+      print(commodities);
     }
 
   }

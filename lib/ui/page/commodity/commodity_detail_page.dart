@@ -35,7 +35,9 @@ class CommodityDetailPageState extends State<CommodityDetailPage> {
     if(_commodity.specification.length == 1){
       _selectIndex = 0;
     }
+    _getCommodity(_commodity.cid);
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -294,7 +296,7 @@ class CommodityDetailPageState extends State<CommodityDetailPage> {
             uid: UserStatus.user!.uid,
             cid: commodity.cid,
             sid: commodity.specification[0].id,
-            counts: 1,
+            counts: _selectedCount,
             addTime: ''
         );
         ResultEntity result = await CommodityAPI.shoppingCartAdd(item);
@@ -306,6 +308,14 @@ class CommodityDetailPageState extends State<CommodityDetailPage> {
       }
     }else{
       Get.toNamed(RouteTable.login);
+    }
+  }
+
+  Future<void> _getCommodity(int cid) async {
+    ResultEntity r = await CommodityAPI.getCommodityDetail(cid);
+    if(r.success){
+      _commodity = r.data!;
+      setState(() {});
     }
   }
 }

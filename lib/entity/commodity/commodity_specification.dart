@@ -1,3 +1,5 @@
+import '../../api/server.dart';
+
 class CommoditySpecification{
   int cid;
   int id;
@@ -14,10 +16,12 @@ class CommoditySpecification{
   });
 
   factory CommoditySpecification.fromJson(Map<String, dynamic> json) {
+    String imageUrl = json['imageUrl'];
+    imageUrl = imageUrl.replaceAll("localhost", Server.hostIp);
     return CommoditySpecification(
       cid: json['cid'] as int,
       id: json['id'] as int,
-      imageUrl: json['imageUrl'] as String,
+      imageUrl: imageUrl,
       specification: json['specification'] as String,
       price: json['price'] as double,
     );

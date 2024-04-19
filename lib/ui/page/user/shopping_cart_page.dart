@@ -161,7 +161,7 @@ class ShoppingCartPageState extends State<ShoppingCartPage>{
                   }
               ),
               const SizedBox(width: 16,),
-              Text(user.nickname),
+              Text("${user.nickname}的直播间"),
             ],
           ),
           ListView.builder(

@@ -1,3 +1,5 @@
+import 'package:live_video_commerce/api/server.dart';
+
 class LiveRoom {
   int rid;
   String uid;
@@ -23,13 +25,17 @@ class LiveRoom {
   });
 
   factory LiveRoom.fromJson(Map<String, dynamic> jsonMap) {
+    String liveUrl = jsonMap['liveUrl'];
+    liveUrl = liveUrl.replaceAll("localhost", Server.hostIp);
+    String coverUrl = jsonMap['coverUrl'];
+    coverUrl = coverUrl.replaceAll("localhost", Server.hostIp);
     return LiveRoom(
       rid: jsonMap['rid'] as int,
       uid: jsonMap['uid'] as String,
       sectionId: jsonMap['sectionId'] as int,
       roomName: jsonMap['roomName'] as String,
-      liveUrl: jsonMap['liveUrl'] as String,
-      coverUrl: jsonMap['coverUrl'] as String,
+      liveUrl: liveUrl,
+      coverUrl: coverUrl,
       danmuUrl: jsonMap['danmuUrl'] ?? '',
       description: jsonMap['roomDescription'] ?? '',
       status: jsonMap['liveStatus'] as int,
@@ -71,10 +77,12 @@ class LiveRoomMini{
   });
 
   factory LiveRoomMini.fromJson(Map<String, dynamic> jsonMap) {
+    String coverUrl = jsonMap['coverUrl'];
+    coverUrl = coverUrl.replaceAll("localhost", Server.hostIp);
     return LiveRoomMini(
       rid: jsonMap['rid'] as int,
       roomName: jsonMap['roomName'] as String,
-      coverUrl: jsonMap['coverUrl'] as String,
+      coverUrl: coverUrl,
       roomDescription: jsonMap['roomDescription'] as String,
       liveStatus: jsonMap['liveStatus'] as int,
     );

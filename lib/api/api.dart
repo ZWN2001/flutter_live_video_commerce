@@ -168,6 +168,7 @@ class LiveRoomAPI{
       }
       return ResultEntity.succeed(data: sections);
     } catch (e) {
+      print(e.toString());
       return ResultEntity.error();
     }
   }
@@ -256,7 +257,7 @@ class CommodityAPI{
       }
       return ResultEntity.succeed(data: list);
     } catch (e) {
-      debugPrint(e.toString());
+      print(e.toString());
       return ResultEntity.error();
     }
   }
@@ -373,7 +374,7 @@ class CommodityAPI{
   static Future<ResultEntity> shoppingCartAdd(ShoppingCartItem shoppingCartItem) async {
     try {
       Response response = await HttpUtils.post(_shoppingCartAdd,
-          data: FormData.fromMap({'shoppingCartItemJson': jsonEncode(shoppingCartItem.toJson())}),
+          data: FormData.fromMap({'shoppingCartItemJsonString': jsonEncode(shoppingCartItem.toJson())}),
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();
