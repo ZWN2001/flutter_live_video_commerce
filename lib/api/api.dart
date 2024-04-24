@@ -9,6 +9,7 @@ import 'package:live_video_commerce/entity/order/order.dart';
 import '../entity/commodity/commodity.dart';
 import '../entity/live_room.dart';
 import '../entity/commodity/receiving_info.dart';
+import '../entity/order/order_commodity_info.dart';
 import '../entity/result.dart';
 import '../entity/section.dart';
 import '../entity/user.dart';
@@ -329,10 +330,10 @@ class CommodityAPI{
     }
   }
 
-  static Future<ResultEntity> orderCreate(Order order) async {
+  static Future<ResultEntity> orderCreate(List<OrderCommodityInfo> list) async {
     try {
       Response response = await HttpUtils.post(_orderCreate,
-          data: FormData.fromMap({'orderCommodityInfoJson': jsonEncode(order.toJson())}),
+          data: FormData.fromMap({'orderCommodityInfoJson': jsonEncode(list.map((e) => e.toJson()).toList())}),
           options: Options(headers: {'Token': UserAPI.token}));
       if(!response.valid){
         return ResultEntity.error();

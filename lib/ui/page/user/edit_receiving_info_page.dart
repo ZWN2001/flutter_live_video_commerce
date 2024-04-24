@@ -202,16 +202,17 @@ class EditReceivingInfoPageState extends State<EditReceivingInfoPage> {
                           ResultEntity res = await ReceivingInfoAPI.receivingInfoAdd(_receivingInfo!);
                           BotToast.showText(text: res.message);
                           if(res.success && context.mounted){
-                            widget.onEditSuccess();
                             Navigator.pop(context, true);
+                            widget.onEditSuccess();
                           }
                         }else {
                           // 编辑
                           ResultEntity res = await ReceivingInfoAPI.receivingInfoUpdate(_receivingInfo!);
                           BotToast.showText(text: res.message);
                           if(res.success && context.mounted){
-                            widget.onEditSuccess();
                             Navigator.pop(context, true);
+                            widget.onEditSuccess();
+
                           }
                         }
                       },

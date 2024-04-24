@@ -7,7 +7,7 @@ import 'package:live_video_commerce/entity/result.dart';
 import '../../../entity/commodity/commodity.dart';
 import '../../../entity/user.dart';
 import '../../widget/item_calculate_widget.dart';
-import '../commodity/order_confirm_page.dart';
+import '../order/order_confirm_page.dart';
 
 class ShoppingCartPage extends StatefulWidget {
   const ShoppingCartPage({super.key});

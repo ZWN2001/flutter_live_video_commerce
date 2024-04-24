@@ -11,7 +11,7 @@ import '../../../entity/result.dart';
 import '../../../entity/user.dart';
 import '../../../route/route.dart';
 import '../../../state/user_status.dart';
-import 'order_confirm_page.dart';
+import '../order/order_confirm_page.dart';
 
 class CommodityDetailPage extends StatefulWidget {
   final Commodity commodity;

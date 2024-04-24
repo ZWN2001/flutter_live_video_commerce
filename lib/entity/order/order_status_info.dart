@@ -40,4 +40,16 @@ class OrderStatusInfo{
       'completeAt': completeAt,
     };
   }
+
+  //empty
+  static OrderStatusInfo empty() {
+    return OrderStatusInfo(
+      oid: '',
+      orderStatus: 0,
+      createAt: '',
+      payAt: '',
+      shipAt: '',
+      completeAt: '',
+    );
+  }
 }

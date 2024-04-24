@@ -28,6 +28,13 @@ class Order{
     };
   }
 
+  //empty
+  static Order empty() {
+    return Order(
+      orderStatusInfo: OrderStatusInfo.empty(),
+      orderCommodityInfo: [],
+    );
+  }
 
 }
 

@@ -40,13 +40,15 @@ class _OrderDetailCardState extends State<OrderDetailCard> {
                   children: [
                     const Icon(Icons.storefront, color: Colors.grey,),
                     const SizedBox(width: 8.0,),
-                    Text(
+                    Expanded(child: Text(
                       widget.orderList[0].commodity.commodityName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
+                    ),)
                   ]
               ),
               const SizedBox(height: 8.0,),
